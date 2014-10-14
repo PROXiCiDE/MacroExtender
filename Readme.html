@@ -1,0 +1,263 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Readme</title><style></style></head><body>
+<h1 id="macroextender">MacroExtender</h1>
+<p>MacroExtender addon for 1.12.1 World of Warcraft</p>
+<ul>
+<li>Conditional behavior for macros</li>
+<li>more macro commands</li>
+</ul>
+<blockquote>
+<p>MacroExtender allows you to create conditional statement macros that are found in WOW Expansion&#39;s TBC+ and more</p>
+</blockquote>
+<h2 id="version">Version</h2>
+<p>1.02</p>
+<h2 id="conditional-statements">Conditional Statements</h2>
+<p>These can also be checked for falseness instead of trueness by prefixing them with <strong>&quot;no&quot;</strong>. For example, <strong>[nocombat]</strong> is a valid conditional and will only perform the actions following it if you are not in combat.</p>
+<p><strong>Retail Conditions</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">condition</th>
+<th style="text-align:left">paramater</th>
+<th style="text-align:left">description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">channeling</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Is the player currently channeling a spell</td>
+</tr>
+<tr>
+<td style="text-align:left">combat</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">In combat</td>
+</tr>
+<tr>
+<td style="text-align:left">dead</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Target is dead</td>
+</tr>
+<tr>
+<td style="text-align:left">exists</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Target exists</td>
+</tr>
+<tr>
+<td style="text-align:left">pet</td>
+<td style="text-align:left">pet type</td>
+<td style="text-align:left">The given pet is out</td>
+</tr>
+<tr>
+<td style="text-align:left">harm</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Can cast harmful spells on the target</td>
+</tr>
+<tr>
+<td style="text-align:left">help</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Can cast helpful spells on the target</td>
+</tr>
+<tr>
+<td style="text-align:left">mod</td>
+<td style="text-align:left">shift/ctrl/alt</td>
+<td style="text-align:left">Holding the given key</td>
+</tr>
+<tr>
+<td style="text-align:left">mounted</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Self explanatory</td>
+</tr>
+<tr>
+<td style="text-align:left">party</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Target is in your party</td>
+</tr>
+<tr>
+<td style="text-align:left">raid</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Target is in your raid/party</td>
+</tr>
+<tr>
+<td style="text-align:left">stance</td>
+<td style="text-align:left">0/1/2/.../n</td>
+<td style="text-align:left">In a stance</td>
+</tr>
+<tr>
+<td style="text-align:left">group</td>
+<td style="text-align:left">party/raid</td>
+<td style="text-align:left">Player is in the given type of group (if argument is omitted, defaults to party)</td>
+</tr>
+<tr>
+<td style="text-align:left">stealth</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Stealthed (Rogue &amp; Druid only self explanatory</td>
+</tr>
+<tr>
+<td style="text-align:left">swimming</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Only detects when submerged in water and the Breathing Timer is available, will return false if in Aquatic Form or anytype of water breathing buff</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><strong>Non Retail Conditions</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">condition</th>
+<th style="text-align:left">paramater</th>
+<th style="text-align:left">description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">shadowform</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Priest is currently in shadowform</td>
+</tr>
+<tr>
+<td style="text-align:left">petloyalty</td>
+<td style="text-align:left">1/2/.../n</td>
+<td style="text-align:left">Hunter&#39;s pet loyalty level</td>
+</tr>
+<tr>
+<td style="text-align:left">pethappy</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Hunter&#39;s pet is happy</td>
+</tr>
+<tr>
+<td style="text-align:left">smartcast</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn&#39;t meet the requirement it will fail and try to cast without rank</td>
+</tr>
+<tr>
+<td style="text-align:left">buff</td>
+<td style="text-align:left">texture</td>
+<td style="text-align:left">Contains buff texture</td>
+</tr>
+<tr>
+<td style="text-align:left">debuff</td>
+<td style="text-align:left">texture</td>
+<td style="text-align:left">Contains debuff texture</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<blockquote>
+<p>Buff and Debuff should be used with risk, There is no correct way to determine what buff or debuff belongs to a specific caster</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>Following macros that accept conditional behaivor</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">command</th>
+<th style="text-align:left">alias</th>
+<th style="text-align:left">description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">castx</td>
+<td style="text-align:left">use</td>
+<td style="text-align:left">Extended version of cast which allow conditional behavior</td>
+</tr>
+<tr>
+<td style="text-align:left">castrandom</td>
+<td style="text-align:left">userandom</td>
+<td style="text-align:left">Cast a random spell from the list </td>
+</tr>
+<tr>
+<td style="text-align:left">pick</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Picks up a item in the players inventory</td>
+</tr>
+<tr>
+<td style="text-align:left">reload</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Reloads the user interface</td>
+</tr>
+<tr>
+<td style="text-align:left">stopcasting</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Stop casting or channeling a spell</td>
+</tr>
+<tr>
+<td style="text-align:left">dismount</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Dismounts your character</td>
+</tr>
+<tr>
+<td style="text-align:left">cancelform</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Cancels your current shapeshift/shadow/ghost wolf form.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><strong><em>Pet commands</em></strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">command</th>
+<th style="text-align:left">description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">petassist</td>
+<td style="text-align:left">Player will assist the pet</td>
+</tr>
+<tr>
+<td style="text-align:left">petaggressive</td>
+<td style="text-align:left">Sets your pet to aggressive mode</td>
+</tr>
+<tr>
+<td style="text-align:left">petdefensive</td>
+<td style="text-align:left">Sets your pet to defensive mode</td>
+</tr>
+<tr>
+<td style="text-align:left">petpassive</td>
+<td style="text-align:left">Sets your pet to passive mode</td>
+</tr>
+<tr>
+<td style="text-align:left">petattack</td>
+<td style="text-align:left">Instructs your pet to attack</td>
+</tr>
+<tr>
+<td style="text-align:left">petfollow</td>
+<td style="text-align:left">Sets your pet to follow you around</td>
+</tr>
+<tr>
+<td style="text-align:left">petstay</td>
+<td style="text-align:left">Sets your pet to stay in its current location</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="examples">Examples</h2>
+<p><strong>Warrior</strong></p>
+<pre><code>/castx [stance:1]Heroic Strike;Rend
+</code></pre><p><strong>Hunter</strong></p>
+<pre><code>/castx [pet,nopethappy]feed pet
+/pick [pet:boar,nopethappy]roasted quail
+</code></pre><p><strong>Rogue</strong></p>
+<pre><code>/castx [stealth]Rupture;Sinister Strike
+</code></pre><p><strong>Warlock</strong></p>
+<pre><code>/castx [smartcast]Shadow Bolt
+/castx [mod:ctrl]Immolate;Curse of Agony
+/castx [mod:shift,harm,nochanneling]Drain Life;Health Funnel
+/castx [harm,nodebuff:Shadow_CurseOfSargeras]Curse of Agony;Corruption
+/castrandom [combat]shadow bolt,immolate;curse of agony,corruption
+
+/petassist [pet,nomod,combat]
+/petattack [pet,mod:shift]
+</code></pre><p><strong>Druid</strong></p>
+<pre><code>/castx [nostance:3]cat form;[stance:3,nostealth]prowl;pounce
+</code></pre><p><strong>Misc</strong></p>
+<pre><code>/dismount [combat,mounted]
+/castrandom [nocombat]corruption,immolate,curse of agony;shadow bolt
+</code></pre>
+</body></html>

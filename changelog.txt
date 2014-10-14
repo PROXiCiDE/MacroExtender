@@ -1,0 +1,16 @@
+ ----------------------------------------------------------------------------------
+-- VERSION HISTORY
+----------------------------------------------------------------------------------
+
+1.02 - 
+		Macro updates / added
+		/castrandom /use /userandom /pick /petaggressive /petdefensive /petpassive /petfollow /petstay
+		/castx can now use items found in the players inventory
+		/cancelform now works with Priest Shadowform and Shaman Ghost Wolf
+		
+		Localization.lua file added, currently only supports English
+		
+		new conditional options: smartcast,shadowform,petloyalty,pethappy
+
+1.01 - Fixed Debug Information
+1.00 - Initial Release

@@ -1,0 +1,17 @@
+## Interface: 11200
+## Title: |cFF7CFC00M|r|cffC495DDacro|r |cFF7CFC00E|r|cffC495DDxtender|r
+## Author: PROXiCiDE
+## Notes: Extend Macro Capabilities for Vanilla WOW
+## SavedVariables: 
+## Version: 1.02
+Localization.lua
+
+Spells.lua
+Talents.lua
+Bags.lua
+
+SecureCmd.lua
+
+Helper.lua
+Event.lua
+Core.lua
