@@ -2,6 +2,7 @@
 -- VERSION HISTORY
 ----------------------------------------------------------------------------------
 
+1.03 - Added /castsequence
 1.02 - 
 		Macro updates / added
 		/castrandom /use /userandom /pick /petaggressive /petdefensive /petpassive /petfollow /petstay

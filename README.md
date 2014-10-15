@@ -10,7 +10,7 @@ MacroExtender addon for 1.12.1 World of Warcraft
 
 Version
 ----
-1.02
+1.03
 
 Conditional Statements
 -----------
@@ -47,17 +47,17 @@ smartcast||Mana efficiency casting, will down rank the spell until it meets the 
 buff|texture|Contains buff texture
 debuff|texture|Contains debuff texture
 ---
->Buff and Debuff should be used with risk, There is no correct way to determine what buff or debuff belongs to a specific caster
 
----
->Following macros that accept conditional behaivor
+*Buff and Debuff should be used with risk, There is no correct way to determine what buff or debuff belongs to a specific caster*
+
+> Following macros that accept conditional behaivor
 
 command|alias|description
 :--|:--|:--
-castx|use|Extended version of cast which allow conditional behavior
+castx|use|Extended version of cast which allow conditional behaviro
+castsequence|castseq|Cast spells in successive order
 castrandom|userandom|Cast a random spell from the list 
 pick||Picks up a item in the players inventory
-reload||Reloads the user interface
 stopcasting||Stop casting or channeling a spell
 dismount||Dismounts your character
 cancelform||Cancels your current shapeshift/shadow/ghost wolf form.
@@ -75,6 +75,12 @@ petfollow|Sets your pet to follow you around
 petstay|Sets your pet to stay in its current location
 ---
 
+> Macro's that don't have conditional behavior
+
+command|description
+:--|:--
+reload|Reloads the user interface
+---
 Examples
 -----------
 __Warrior__
@@ -99,7 +105,12 @@ __Warlock__
 /castx [mod:ctrl]Immolate;Curse of Agony
 /castx [mod:shift,harm,nochanneling]Drain Life;Health Funnel
 /castx [harm,nodebuff:Shadow_CurseOfSargeras]Curse of Agony;Corruption
+
 /castrandom [combat]shadow bolt,immolate;curse of agony,corruption
+
+/castsequence reset=target/combat corruption,curse of agony,immolation,shadow bolt,shadow bolt,shadow bolt
+
+/castsequence reset=30 demon armor, soul link
 
 /petassist [pet,nomod,combat]
 /petattack [pet,mod:shift]

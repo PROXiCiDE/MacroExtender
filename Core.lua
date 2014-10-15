@@ -1,6 +1,7 @@
 local L = ME_GetLocale()
 
 --TODO: Implement help / settings to control Macro Extender
+--Currently being used for debugging
 local function ProxMacro_Handler(msg,editbox)
         if  msg or msg ~= "" then
                 local args = {};
@@ -37,6 +38,14 @@ SLASH_PXCASTX2 = "/use"
 SlashCmdList["PXCASTX"] = function (msg,editbox)
         if  msg or msg ~= "" then
                 ME_CastSpell(msg)
+        end
+end
+
+SLASH_PXCASTSEQUENCE1 = "/castsequence"
+SLASH_PXCASTSEQUENCE2 = "/castseq"
+SlashCmdList["PXCASTSEQUENCE"] = function (msg,editbox)
+        if  msg or msg ~= "" then
+                ME_CastSequence(msg)
         end
 end
 

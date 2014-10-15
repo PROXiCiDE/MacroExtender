@@ -1,4 +1,3 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>Readme</title><style></style></head><body>
 <h1 id="macroextender">MacroExtender</h1>
 <p>MacroExtender addon for 1.12.1 World of Warcraft</p>
 <ul>
@@ -6,12 +5,12 @@
 <li>more macro commands</li>
 </ul>
 <blockquote>
-<p>MacroExtender allows you to create conditional statement macros that are found in WOW Expansion&#39;s TBC+ and more</p>
+<p>MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more</p>
 </blockquote>
 <h2 id="version">Version</h2>
-<p>1.02</p>
+<p>1.03</p>
 <h2 id="conditional-statements">Conditional Statements</h2>
-<p>These can also be checked for falseness instead of trueness by prefixing them with <strong>&quot;no&quot;</strong>. For example, <strong>[nocombat]</strong> is a valid conditional and will only perform the actions following it if you are not in combat.</p>
+<p>These can also be checked for falseness instead of trueness by prefixing them with <strong>"no"</strong>. For example, <strong>[nocombat]</strong> is a valid conditional and will only perform the actions following it if you are not in combat.</p>
 <p><strong>Retail Conditions</strong></p>
 <table>
 <thead>
@@ -90,7 +89,7 @@
 <tr>
 <td style="text-align:left">stealth</td>
 <td style="text-align:left"></td>
-<td style="text-align:left">Stealthed (Rogue &amp; Druid only self explanatory</td>
+<td style="text-align:left">Stealthed (Rogue & Druid only self explanatory</td>
 </tr>
 <tr>
 <td style="text-align:left">swimming</td>
@@ -118,17 +117,17 @@
 <tr>
 <td style="text-align:left">petloyalty</td>
 <td style="text-align:left">1/2/.../n</td>
-<td style="text-align:left">Hunter&#39;s pet loyalty level</td>
+<td style="text-align:left">Hunter's pet loyalty level</td>
 </tr>
 <tr>
 <td style="text-align:left">pethappy</td>
 <td style="text-align:left"></td>
-<td style="text-align:left">Hunter&#39;s pet is happy</td>
+<td style="text-align:left">Hunter's pet is happy</td>
 </tr>
 <tr>
 <td style="text-align:left">smartcast</td>
 <td style="text-align:left"></td>
-<td style="text-align:left">Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn&#39;t meet the requirement it will fail and try to cast without rank</td>
+<td style="text-align:left">Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank</td>
 </tr>
 <tr>
 <td style="text-align:left">buff</td>
@@ -143,10 +142,7 @@
 </tbody>
 </table>
 <hr>
-<blockquote>
-<p>Buff and Debuff should be used with risk, There is no correct way to determine what buff or debuff belongs to a specific caster</p>
-</blockquote>
-<hr>
+<p><em>Buff and Debuff should be used with risk, There is no correct way to determine what buff or debuff belongs to a specific caster</em></p>
 <blockquote>
 <p>Following macros that accept conditional behaivor</p>
 </blockquote>
@@ -162,7 +158,12 @@
 <tr>
 <td style="text-align:left">castx</td>
 <td style="text-align:left">use</td>
-<td style="text-align:left">Extended version of cast which allow conditional behavior</td>
+<td style="text-align:left">Extended version of cast which allow conditional behaviro</td>
+</tr>
+<tr>
+<td style="text-align:left">castsequence</td>
+<td style="text-align:left">castseq</td>
+<td style="text-align:left">Cast spells in successive order</td>
 </tr>
 <tr>
 <td style="text-align:left">castrandom</td>
@@ -173,11 +174,6 @@
 <td style="text-align:left">pick</td>
 <td style="text-align:left"></td>
 <td style="text-align:left">Picks up a item in the players inventory</td>
-</tr>
-<tr>
-<td style="text-align:left">reload</td>
-<td style="text-align:left"></td>
-<td style="text-align:left">Reloads the user interface</td>
 </tr>
 <tr>
 <td style="text-align:left">stopcasting</td>
@@ -237,6 +233,24 @@
 </tbody>
 </table>
 <hr>
+<blockquote>
+<p>Macro's that don't have conditional behavior</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">command</th>
+<th style="text-align:left">description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">reload</td>
+<td style="text-align:left">Reloads the user interface</td>
+</tr>
+</tbody>
+</table>
+<hr>
 <h2 id="examples">Examples</h2>
 <p><strong>Warrior</strong></p>
 <pre><code>/castx [stance:1]Heroic Strike;Rend
@@ -250,7 +264,12 @@
 /castx [mod:ctrl]Immolate;Curse of Agony
 /castx [mod:shift,harm,nochanneling]Drain Life;Health Funnel
 /castx [harm,nodebuff:Shadow_CurseOfSargeras]Curse of Agony;Corruption
+
 /castrandom [combat]shadow bolt,immolate;curse of agony,corruption
+
+/castsequence reset=target/combat corruption,curse of agony,immolation,shadow bolt,shadow bolt,shadow bolt
+
+/castsequence reset=30 demon armor, soul link
 
 /petassist [pet,nomod,combat]
 /petattack [pet,mod:shift]
@@ -260,4 +279,3 @@
 <pre><code>/dismount [combat,mounted]
 /castrandom [nocombat]corruption,immolate,curse of agony;shadow bolt
 </code></pre>
-</body></html>

@@ -1,4 +1,5 @@
 local L = ME_GetLocale()
+ME_CastSequenceList ={}
 
 local function SecureCmdOptionEval(val, desired)
         if ( desired ) then
@@ -396,4 +397,154 @@ end
 
 function SecureCmdOptionParse(args)
         return SecureCmdOptionParseArgs(strsplit(';', args))
+end
+
+
+local function SetCastSequenceIndex(entry, index)
+        entry.index = index
+end
+
+local function ResetCastSequence(sequence, entry)
+        SetCastSequenceIndex(entry, 1)
+        ME_CastSequenceList[sequence] = nil
+end
+
+local function SetNextCastSequence(sequence, entry)
+        if ( entry.index == table.getn(entry.spells) ) then
+                ResetCastSequence(sequence, entry)
+        else
+                SetCastSequenceIndex(entry, entry.index + 1)
+        end
+end
+
+local function CreateCastSquenceActions( tbl, ... )
+        tbl.spells = {}
+        tbl.items = {}
+        for i=1, table.getn(arg) do
+                local action = strtrim(arg[i])
+                if (ME_GetBagItemInfo(action) or Select(3,SecureCmdItemParse(action))) then
+                        tbl.items[i] = action
+                        tbl.spells[i] = action
+                else
+                        tbl.spells[i] = action
+                end
+        end
+end
+
+local function ME_CastSequenceManagerOnEvent( ... )
+        local reset = nil
+        
+        
+        if event == "PLAYER_ENTERING_WORLD" then
+                for sequence,entry in pairs(ME_CastSequenceList) do
+                        SetCastSequenceIndex(entry,entry.index)
+                end
+                return
+        end
+        
+        if event == "PLAYER_DEAD" then
+                for sequence,entry in pairs(ME_CastSequenceList) do
+                        ResetCastSequence(sequence,entry)
+                end
+                return
+        end
+        
+        if event == "SPELLCAST_STOP" or event == "SPELLCAST_CHANNEL_STOP" then
+                for sequence,entry in pairs(ME_CastSequenceList) do
+                        SetNextCastSequence(sequence,entry)
+                end
+                return
+        end
+        
+        if event == "PLAYER_TARGET_CHANGED" then
+                reset = "target"
+        elseif event == "PLAYER_REGEN_ENABLED" then
+                reset = "combat"
+        end
+        
+        
+        if reset ~= nil then
+                for sequence,entry in pairs(ME_CastSequenceList) do
+                        if string.find(entry.reset,reset,1,true) then
+                                ResetCastSequence(sequence,entry)
+                        end
+                end
+        end
+end
+
+local function ME_CastSequenceManagerOnUpdate( ... )
+        local elapsed = this.elapsed + arg1
+        if elapsed < 1 then
+                this.elapsed = elapsed
+                return
+        end
+        
+        for sequence,entry in pairs(ME_CastSequenceList) do
+                if entry.timeout then
+                        if elapsed >= entry.timeout then
+                                ResetCastSequence(sequence,entry)
+                        else
+                                entry.timeout = entry.timeout - elapsed
+                        end
+                end
+        end
+        this.elapsed = 0
+end
+
+function ExecuteCastSequence( sequence, target )
+        if not ME_CastSequenceManager then
+                ME_CastSequenceManager = CreateFrame("Frame")
+                ME_CastSequenceManager.elapsed = 0
+                ME_CastSequenceManager:RegisterEvent("PLAYER_DEAD")
+                ME_CastSequenceManager:RegisterEvent("PLAYER_ENTERING_WORLD")
+                ME_CastSequenceManager:RegisterEvent("PLAYER_REGEN_ENABLED")
+                ME_CastSequenceManager:RegisterEvent("PLAYER_TARGET_CHANGED")
+                ME_CastSequenceManager:RegisterEvent("SPELLCAST_FAILED")
+                ME_CastSequenceManager:RegisterEvent("SPELLCAST_STOP")
+                ME_CastSequenceManager:RegisterEvent("SPELLCAST_CHANNEL_STOP")
+                ME_CastSequenceManager:SetScript("OnEvent",ME_CastSequenceManagerOnEvent)
+                ME_CastSequenceManager:SetScript("OnUpdate",ME_CastSequenceManagerOnUpdate)
+        end
+        
+        local entry = ME_CastSequenceList[sequence]
+        if not entry then
+                local found,_,reset, spells = string.find(sequence, "^reset=([^%s]+)%s*(.*)")
+                if not found then
+                        spells = sequence
+                end
+                entry = {}
+                CreateCastSquenceActions(entry,strsplit(",",spells))
+                entry.reset = string.lower(reset or "")
+                ME_CastSequenceList[sequence] = entry
+                entry.index = 1
+        end
+        
+        local found, _, timeout = string.find(entry.reset,"(%d+)")
+        if found then
+                entry.timeout = ME_CastSequenceManager.elapsed + tonumber(timeout)
+        end
+        
+        if (string.find(entry.reset,"shift",1,true) or string.find(entry.reset,"ctrl",1,true) or string.find(entry.reset,"alt",1,true)) and IsModifierKeyDown() then
+                SetCastSequenceIndex(entry,1)
+        end
+        
+        local item,spell = entry.items[entry.index], entry.spells[entry.index]
+        if item then
+                local name,bag,slot = SecureCmdItemParse(item)
+                if slot then
+                        if name then
+                                spell = ME_GetBagItemInfo(name) or ""
+                        else
+                                spells = ""
+                        end
+                        entry.spells[entry.index] = spell
+                end
+                SecureCmdUseItem(name, bag, slot, target)
+        else
+                CastSpellByName(spell,target)
+        end
+        
+        if spell == "" then
+                SetNextCastSequence(sequence,entry)
+        end
 end

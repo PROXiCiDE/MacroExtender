@@ -36,10 +36,10 @@ local function ME_FrameOnEvent( ... )
         if event == "PLAYER_LOGIN" or event == "PLAYER_ENTERING_WORLD" then
                 ME_UpdateTalentPoints()
                 ME_UpdateSpellBook()
-
+                
                 ME_UpdateBags()
         end
-
+        
         if event == "PLAYER_ENTERING_WORLD" then
                 ME_Print("Has been loaded")
         end
@@ -47,7 +47,7 @@ local function ME_FrameOnEvent( ... )
         if event == "BAG_UPDATE" then
                 ME_UpdateBags()
         end
-
+        
         if event == "PLAYER_DEAD" then
                 ME_EventLog.Swimming = false
         end

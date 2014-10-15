@@ -16,7 +16,7 @@ function ME_Print( ... )
 end
 
 --Similar to DevTool_Dump but very lightweight
-local function PXED_PrintArgs( tbl )
+function PXED_PrintArgs( tbl )
         local str = ""
         for k,v in pairs(tbl) do
                 local s = v
@@ -362,6 +362,19 @@ function ME_CastSpell( macro )
         
         if action then
                 ME_CastOrUseItem(action,selfcast,smartcast)
+        end
+end
+
+function ME_CastSequence( macro )
+        local action, target, smartcast = SecureCmdOptionParse(macro)
+        local selfcast = 0
+        
+        if target and target == "player" then
+                selfcast = 1
+        end
+        
+        if action then
+                ExecuteCastSequence(action,selfcast)
         end
 end
 
