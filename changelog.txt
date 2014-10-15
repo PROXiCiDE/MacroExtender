@@ -2,6 +2,11 @@
 -- VERSION HISTORY
 ----------------------------------------------------------------------------------
 
+1.04 - 
+		equipped condition is now available
+		Syntax checking for /castsequence
+		Removed useless Locale strings
+		fixed bugs for buff/debuff conditions
 1.03 - Added /castsequence
 1.02 - 
 		Macro updates / added

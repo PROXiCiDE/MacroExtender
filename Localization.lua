@@ -15,9 +15,8 @@ if string.find(LOCALE,"^en") then return end
 if LOCALE == "esES" or LOCALE == "esMX" then
         -- Spanish translations go here
         L["Increases speed by (%d+)%%."] = "Increases speed by (%d+)%%."
-        L["Invalid argument's for condition Buff"] = "Invalid argument's for condition Buff"
-        L["Invalid argument's for condition Debuff"] = "Invalid argument's for condition Debuff"
         L["Unknown Option"] = "Unknown Option"
+        L["Syntax Error"] = "Syntax Error"
 return end
 
 if LOCALE == "deDE" then

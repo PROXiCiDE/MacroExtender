@@ -3,12 +3,13 @@
 ## Author: PROXiCiDE
 ## Notes: Extend Macro Capabilities for Vanilla WOW
 ## SavedVariables: 
-## Version: 1.03
+## Version: 1.04
 Localization.lua
 
 Spells.lua
 Talents.lua
 Bags.lua
+Inventory.lua
 
 SecureCmd.lua
 Helper.lua

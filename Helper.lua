@@ -33,8 +33,12 @@ function PXED_PrintArgs( tbl )
         ME_Print("%s",str)
 end
 
-function Select(a, ... )
-        return arg[a]
+function Select(a,...)
+        if type(a) == "string" and a == "#" then
+                return arg.n
+        else
+                return arg[a]
+        end
 end
 
 function WipeTable( tab )
@@ -98,6 +102,16 @@ function ME_GetLinkInfo( link )
                 return tonumber(id), name
         end
         return nil
+end
+
+function GetItemInfoType(link)
+        local id = link
+        if type(link) == "string" then
+                id = ME_GetLinkInfo(link)
+        end
+        
+        local _, _, _, _, itemType, itemSubType, _, _, _ = GetItemInfo(id)
+        return itemType, itemSubType
 end
 
 function GetInventoryFreeSlots( bag )
@@ -313,6 +327,10 @@ function GetShapeshiftForm( ... )
         return 0
 end
 
+function IsModifierKeyDown( ... )
+        return (IsShiftKeyDown() or IsControlKeyDown() or IsAltKeyDown())
+end
+
 function IsStealthed( ... )
         local pcClass = Select(2,UnitClass("player"))
         if pcClass == "ROGUE" or pcClass == "DRUID" then
@@ -368,7 +386,14 @@ end
 function ME_CastSequence( macro )
         local action, target, smartcast = SecureCmdOptionParse(macro)
         local selfcast = 0
-        
+        if action then
+                if string.find(macro,"reset=([^%s]+)%s*%b[]") then
+                        ME_Print("/castsequence "..L["Syntax Error"])
+                        ME_Print("/castsequence [condition] reset=options spell,spell,spell")
+                        ME_Print("/castsequence [pet] reset=target corruption,curse of agony,immolate,shadow bolt,shadow bolt,shadow bolt")
+                        return
+                end
+        end
         if target and target == "player" then
                 selfcast = 1
         end

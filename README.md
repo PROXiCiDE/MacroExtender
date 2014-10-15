@@ -10,7 +10,7 @@ MacroExtender addon for 1.12.1 World of Warcraft
 
 Version
 ----
-1.03
+1.04
 
 Conditional Statements
 -----------
@@ -23,6 +23,7 @@ condition|paramater|description
 channeling||Is the player currently channeling a spell
 combat||In combat
 dead||Target is dead
+equipped|item type|item type is equipped (item type, or item subtype)
 exists||Target exists
 pet|pet type|The given pet is out
 harm||Can cast harmful spells on the target
@@ -86,6 +87,7 @@ Examples
 __Warrior__
 ```
 /castx [stance:1]Heroic Strike;Rend
+/castx [equipped:shields]defensive stance
 ```
 
 __Hunter__

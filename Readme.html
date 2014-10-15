@@ -8,7 +8,7 @@
 <p>MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more</p>
 </blockquote>
 <h2 id="version">Version</h2>
-<p>1.03</p>
+<p>1.04</p>
 <h2 id="conditional-statements">Conditional Statements</h2>
 <p>These can also be checked for falseness instead of trueness by prefixing them with <strong>"no"</strong>. For example, <strong>[nocombat]</strong> is a valid conditional and will only perform the actions following it if you are not in combat.</p>
 <p><strong>Retail Conditions</strong></p>
@@ -35,6 +35,11 @@
 <td style="text-align:left">dead</td>
 <td style="text-align:left"></td>
 <td style="text-align:left">Target is dead</td>
+</tr>
+<tr>
+<td style="text-align:left">equipped</td>
+<td style="text-align:left">item type</td>
+<td style="text-align:left">item type is equipped (item type, or item subtype)</td>
 </tr>
 <tr>
 <td style="text-align:left">exists</td>
@@ -254,6 +259,7 @@
 <h2 id="examples">Examples</h2>
 <p><strong>Warrior</strong></p>
 <pre><code>/castx [stance:1]Heroic Strike;Rend
+/castx [equipped:shields]defensive stance
 </code></pre><p><strong>Hunter</strong></p>
 <pre><code>/castx [pet,nopethappy]feed pet
 /pick [pet:boar,nopethappy]roasted quail

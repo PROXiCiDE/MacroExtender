@@ -123,6 +123,19 @@ local SecureCmdOptionHandlers = {
                 end
         end,
         
+        equipped = function(target, ...)
+                local n = table.getn(arg)
+                if ( n > 0 ) then
+                        for i=1, n do
+                                local type = string.lower(arg[i])
+                                if ME_IsEquippedItemType(type) then
+                                        return true
+                                end
+                        end
+                end
+                return false
+        end,
+        
         mod = function(target, ...)
                 local n = table.getn(arg)
                 if ( n > 0 ) then
@@ -182,24 +195,18 @@ local SecureCmdOptionHandlers = {
         end,
         
         buff = function(target, desired)
-                if desired ~= nil and destired ~= "" and string.find(desired,"([%w%_]+)") then
-                        
+                if desired ~= nil and desired ~= "" and string.find(desired,"([%w%_]+)") then
                         if (UnitExists(target) and HasBuff(desired,target)) then
                                 return true
-                        else
-                                ME_Print(L["Invalid argument's for condition Buff"])
                         end
                 end
                 return false    
         end,
         
         debuff = function(target, desired)
-                if desired ~= nil and destired ~= "" and string.find(desired,"([%w%_]+)") then
-                        
+                if desired ~= nil and desired ~= "" and string.find(desired,"([%w%_]+)") then
                         if (UnitExists(target) and HasDebuff(desired,target)) then
                                 return true
-                        else
-                                ME_Print(L["Invalid argument's for condition Debuff"])
                         end
                 end
                 return false    
@@ -499,7 +506,6 @@ function ExecuteCastSequence( sequence, target )
                 ME_CastSequenceManager:RegisterEvent("PLAYER_ENTERING_WORLD")
                 ME_CastSequenceManager:RegisterEvent("PLAYER_REGEN_ENABLED")
                 ME_CastSequenceManager:RegisterEvent("PLAYER_TARGET_CHANGED")
-                ME_CastSequenceManager:RegisterEvent("SPELLCAST_FAILED")
                 ME_CastSequenceManager:RegisterEvent("SPELLCAST_STOP")
                 ME_CastSequenceManager:RegisterEvent("SPELLCAST_CHANNEL_STOP")
                 ME_CastSequenceManager:SetScript("OnEvent",ME_CastSequenceManagerOnEvent)

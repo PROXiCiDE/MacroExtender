@@ -26,6 +26,8 @@ ME_Frame:RegisterEvent("MIRROR_TIMER_STOP")
 ME_Frame:RegisterEvent("MIRROR_TIMER_START")
 
 ME_Frame:RegisterEvent("BAG_UPDATE")
+ME_Frame:RegisterEvent("UPDATE_INVENTORY_ALERTS")
+ME_Frame:RegisterEvent("UNIT_INVENTORY_CHANGED")
 
 local function ME_FrameOnEvent( ... )
         -- body
@@ -38,6 +40,16 @@ local function ME_FrameOnEvent( ... )
                 ME_UpdateSpellBook()
                 
                 ME_UpdateBags()
+                ME_InventoryUpdate()
+        end
+        
+        if event == "UPDATE_INVENTORY_ALERTS" then
+                if arg1 == "player" then
+                        ME_InventoryUpdate()
+                end
+        end
+        if event == "UNIT_INVENTORY_CHANGED" then
+                ME_InventoryUpdate()
         end
         
         if event == "PLAYER_ENTERING_WORLD" then
