@@ -2,6 +2,9 @@ ME_Bags = {}
 
 function ME_IsItemInBags( name )
         if name then
+                if string.find(name,"item:(%d+)") then
+                        _, name = ME_GetLinkInfo(name)
+                end
                 name = string.lower(name)
                 if ME_Bags[name] then
                         return true, ME_Bags[name]
@@ -12,7 +15,7 @@ end
 
 function ME_GetBagItemInfo( name )
         local found, item = ME_IsItemInBags(name)
-        if found then
+        if found and item then
                 return GetItemInfo(item.id)
         end
         return nil
@@ -20,14 +23,24 @@ end
 
 function ME_UseItemByName( name, target )
         local found, item = ME_IsItemInBags(name)
+        if not item[1].bag then
+                return
+        end
         if found then
-                UseContainerItem(item[1].bag,item[1].slot,target)
+                if item[1].slot then
+                        UseContainerItem(item[1].bag,item[1].slot,target)
+                else
+                        UseIventoryItem(item[1].bag)
+                end
         end
 end
 
 function ME_PickItemByName( name )
         local found, item = ME_IsItemInBags(name)
-        if found then
+        if not item[1].bag then
+                return
+        end
+        if found and item then
                 PickupContainerItem(item[1].bag,item[1].slot)
         end
 end

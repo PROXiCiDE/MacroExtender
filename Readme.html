@@ -8,7 +8,7 @@
 <p>MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more</p>
 </blockquote>
 <h2 id="version">Version</h2>
-<p>1.04</p>
+<p>1.05</p>
 <h2 id="conditional-statements">Conditional Statements</h2>
 <p>These can also be checked for falseness instead of trueness by prefixing them with <strong>"no"</strong>. For example, <strong>[nocombat]</strong> is a valid conditional and will only perform the actions following it if you are not in combat.</p>
 <p><strong>Retail Conditions</strong></p>
@@ -39,7 +39,7 @@
 <tr>
 <td style="text-align:left">equipped</td>
 <td style="text-align:left">item type</td>
-<td style="text-align:left">item type is equipped (item type, or item subtype)</td>
+<td style="text-align:left">item type is equipped (item type can be an inventory slot, item type, or item subtype)</td>
 </tr>
 <tr>
 <td style="text-align:left">exists</td>
@@ -115,6 +115,16 @@
 </thead>
 <tbody>
 <tr>
+<td style="text-align:left">mana</td>
+<td style="text-align:left">relational operators #n</td>
+<td style="text-align:left">Target mana is compared with #n</td>
+</tr>
+<tr>
+<td style="text-align:left">health</td>
+<td style="text-align:left">relational operators #n</td>
+<td style="text-align:left">Target health is compared with #n</td>
+</tr>
+<tr>
 <td style="text-align:left">shadowform</td>
 <td style="text-align:left"></td>
 <td style="text-align:left">Priest is currently in shadowform</td>
@@ -147,6 +157,40 @@
 </tbody>
 </table>
 <hr>
+<blockquote>
+<p>Relational operators for mana / health condition for comparison</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">operator</th>
+<th style="text-align:left">description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><</td>
+<td style="text-align:left">Less than</td>
+</tr>
+<tr>
+<td style="text-align:left">></td>
+<td style="text-align:left">Greater than</td>
+</tr>
+<tr>
+<td style="text-align:left">>=</td>
+<td style="text-align:left">Greater than or equal to</td>
+</tr>
+<tr>
+<td style="text-align:left"><=</td>
+<td style="text-align:left">Less than or equal to</td>
+</tr>
+<tr>
+<td style="text-align:left">==</td>
+<td style="text-align:left">Equal to</td>
+</tr>
+</tbody>
+</table>
+<hr>
 <p><em>Buff and Debuff should be used with risk, There is no correct way to determine what buff or debuff belongs to a specific caster</em></p>
 <blockquote>
 <p>Following macros that accept conditional behaivor</p>
@@ -173,7 +217,12 @@
 <tr>
 <td style="text-align:left">castrandom</td>
 <td style="text-align:left">userandom</td>
-<td style="text-align:left">Cast a random spell from the list </td>
+<td style="text-align:left">Cast a random spell from the list</td>
+</tr>
+<tr>
+<td style="text-align:left">equip</td>
+<td style="text-align:left">eq</td>
+<td style="text-align:left">Equip items from the list</td>
 </tr>
 <tr>
 <td style="text-align:left">pick</td>
@@ -193,7 +242,7 @@
 <tr>
 <td style="text-align:left">cancelform</td>
 <td style="text-align:left"></td>
-<td style="text-align:left">Cancels your current shapeshift/shadow/ghost wolf form.</td>
+<td style="text-align:left">Cancels your current shapeshift/shadow/ghost wolf form</td>
 </tr>
 </tbody>
 </table>
@@ -277,6 +326,8 @@
 
 /castsequence reset=30 demon armor, soul link
 
+/castsequence [health:>=25]immolate,corruption,curse of agony,shadow bolt,shadow bolt,shadow bolt;drain soul
+
 /petassist [pet,nomod,combat]
 /petattack [pet,mod:shift]
 </code></pre><p><strong>Druid</strong></p>
@@ -284,4 +335,8 @@
 </code></pre><p><strong>Misc</strong></p>
 <pre><code>/dismount [combat,mounted]
 /castrandom [nocombat]corruption,immolate,curse of agony;shadow bolt
+
+/equip [stance:2]The Face of Death, Quel'Serrar
+
+/equip [nocombat] dreadmist mask,dreadmist robe,dreadmist bracers,dreadmist wraps,dreadmist belt,dreadmist leggings,dreadmist sandals,blade of the new moon,rune band of wizardry,tome of the lost
 </code></pre>

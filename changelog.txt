@@ -2,6 +2,14 @@
 -- VERSION HISTORY
 ----------------------------------------------------------------------------------
 
+1.05 -
+		Macro condtion changes
+		mana / health condtion checks via percentage base
+		equipped condition now accepts iventory slots
+		smartcast condition now supports Life Tap, must meet requirements such as Mana < 100%, will down rank life tap to the corresponding mana deficiency
+
+		Macro commands
+		/equip added can accept list of items
 1.04 - 
 		equipped condition is now available
 		Syntax checking for /castsequence

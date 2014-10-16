@@ -8,6 +8,9 @@ CreateFrame("GameTooltip","ME_BuffTooltip",UIParent,'GameTooltipTemplate')
 ME_BuffTooltip:SetFrameStrata("TOOLTIP")
 ME_BuffTooltip:Hide()
 
+CreateFrame("GameTooltip","ME_InvTooltip",UIParent,'GameTooltipTemplate')
+ME_InvTooltip:SetFrameStrata("TOOLTIP")
+ME_InvTooltip:Hide()
 
 function ME_Print( ... )
         if DEFAULT_CHAT_FRAME then
@@ -260,6 +263,23 @@ function GetPlayerMountBuffInfo ()
         return false
 end
 
+function IsUnitCaster( unit )
+        local class = GetUnitClass(unit)
+        if class and (class == "MAGE" or class == "PRIEST" or class == "WARLOCK" ) then
+                return true
+        end
+        return false
+end
+
+function UnitHealthPct(unit)
+        return (((UnitHealth(unit) / UnitHealthMax(unit)) * 100));
+end
+
+--Returns Mana Percent of Unit
+function UnitManaPct(unit)
+        return (((UnitMana(unit) / UnitManaMax(unit)) * 100));
+end
+
 function IsMounted()
         if GetPlayerMountBuffInfo() then
                 return 1
@@ -366,7 +386,10 @@ function ME_CastOrUseItem(action, selfcast,smartcast)
                 if smartcast then
                         action = Select(1,ME_GetSpellEfficencay(action))
                 end
-                CastSpellByName(action,selfcast)
+                
+                if action then
+                        CastSpellByName(action,selfcast)
+                end
         end
 end
 
@@ -413,6 +436,27 @@ function ME_PickItem( macro )
                 else
                         ME_PickItemByName(action)
                 end
+        end
+end
+
+function ME_EquipItem( macro )
+        local function EquipFromList( ... )
+                for i=1,table.getn(arg) do
+                        local item = arg[i]
+                        if item then
+                                local name, bag, slot = SecureCmdItemParse(item)
+                                if slot or ME_GetBagItemInfo(name) then
+                                        if ME_IsEquippableByClass(name) then
+                                                SecureCmdUseItem(name,bag,slot,false)
+                                        end
+                                end
+                        end
+                end
+        end
+        
+        local actions = SecureCmdOptionParse(macro)
+        if actions then
+                EquipFromList(strsplit(",",actions))
         end
 end
 

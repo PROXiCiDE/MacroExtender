@@ -13,6 +13,14 @@ local function SecureCmdOptionEval(val, desired)
         end
 end
 
+local SecureCmdRelationalOperatorsHandlers = {
+        ['>'] = function (w, n) return w > n end,
+        ['>='] = function (w, n) return w >= n end,
+        ['<'] = function (w, n) return w < n end,
+        ['<='] = function (w, n) return w <= n end,
+        ['=='] = function (w, n) return w == n end,
+}
+
 local SecureCmdOptionHandlers = {  
         --  
         -- WOW Conditions 
@@ -159,6 +167,40 @@ local SecureCmdOptionHandlers = {
         --
         --Non WOW Conditions
         --
+        mana = function(target,desired)
+                if not UnitExists(target) then
+                        return false
+                end
+                if desired then
+                        local found,_,operand,num = string.find(desired, "%s*([<>=]+)%s*(%d+)")
+                        if found then
+                                local op_f = SecureCmdRelationalOperatorsHandlers[operand]
+                                if op_f then
+                                        num = tonumber(num)
+                                        return op_f(UnitManaPct(target),num)
+                                end
+                        end
+                end
+                return false
+        end,
+        
+        health = function(target,desired)
+                if not UnitExists(target) then
+                        return false
+                end
+                if desired then
+                        local found,_,operand,num = string.find(desired, "%s*([<>=]+)%s*(%d+)")
+                        if found then
+                                local op_f = SecureCmdRelationalOperatorsHandlers[operand]
+                                if op_f then
+                                        num = tonumber(num)
+                                        return op_f(UnitHealthPct(target),num)
+                                end
+                        end
+                end
+                return false
+        end,
+        
         pethappy = function (target,...) 
                 if ( not UnitExists("pet") or (Select(2,UnitClass("player")) ~= "HUNTER") ) then
                         return false
@@ -427,13 +469,17 @@ end
 local function CreateCastSquenceActions( tbl, ... )
         tbl.spells = {}
         tbl.items = {}
+        local index = 0
         for i=1, table.getn(arg) do
                 local action = strtrim(arg[i])
-                if (ME_GetBagItemInfo(action) or Select(3,SecureCmdItemParse(action))) then
-                        tbl.items[i] = action
-                        tbl.spells[i] = action
-                else
-                        tbl.spells[i] = action
+                if action and action ~= "" then
+                        index = index + 1
+                        if (ME_GetBagItemInfo(action) or Select(3,SecureCmdItemParse(action))) then
+                                tbl.items[index] = action
+                                tbl.spells[index] = action
+                        else
+                                tbl.spells[index] = action
+                        end
                 end
         end
 end

@@ -10,7 +10,7 @@ MacroExtender addon for 1.12.1 World of Warcraft
 
 Version
 ----
-1.04
+1.05
 
 Conditional Statements
 -----------
@@ -23,7 +23,7 @@ condition|paramater|description
 channeling||Is the player currently channeling a spell
 combat||In combat
 dead||Target is dead
-equipped|item type|item type is equipped (item type, or item subtype)
+equipped|item type|item type is equipped (item type can be an inventory slot, item type, or item subtype)
 exists||Target exists
 pet|pet type|The given pet is out
 harm||Can cast harmful spells on the target
@@ -41,12 +41,25 @@ swimming||Only detects when submerged in water and the Breathing Timer is availa
 
 condition|paramater|description
 :--|:--|:--|
+mana|relational operators #n|Target mana is compared with #n
+health|relational operators #n|Target health is compared with #n
 shadowform||Priest is currently in shadowform
 petloyalty|1/2/.../n|Hunter's pet loyalty level
 pethappy||Hunter's pet is happy
 smartcast||Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank
 buff|texture|Contains buff texture
 debuff|texture|Contains debuff texture
+---
+
+>Relational operators for mana / health condition for comparison
+
+operator|description
+:--|:--|
+<|Less than
+>|Greater than
+>=|Greater than or equal to
+<=|Less than or equal to
+==|Equal to
 ---
 
 *Buff and Debuff should be used with risk, There is no correct way to determine what buff or debuff belongs to a specific caster*
@@ -57,11 +70,12 @@ command|alias|description
 :--|:--|:--
 castx|use|Extended version of cast which allow conditional behaviro
 castsequence|castseq|Cast spells in successive order
-castrandom|userandom|Cast a random spell from the list 
+castrandom|userandom|Cast a random spell from the list
+equip|eq|Equip items from the list
 pick||Picks up a item in the players inventory
 stopcasting||Stop casting or channeling a spell
 dismount||Dismounts your character
-cancelform||Cancels your current shapeshift/shadow/ghost wolf form.
+cancelform||Cancels your current shapeshift/shadow/ghost wolf form
 ---
 ___Pet commands___
 
@@ -114,6 +128,8 @@ __Warlock__
 
 /castsequence reset=30 demon armor, soul link
 
+/castsequence [health:>=25]immolate,corruption,curse of agony,shadow bolt,shadow bolt,shadow bolt;drain soul
+
 /petassist [pet,nomod,combat]
 /petattack [pet,mod:shift]
 ```
@@ -127,4 +143,8 @@ __Misc__
 ```
 /dismount [combat,mounted]
 /castrandom [nocombat]corruption,immolate,curse of agony;shadow bolt
+
+/equip [stance:2]The Face of Death, Quel'Serrar
+
+/equip [nocombat] dreadmist mask,dreadmist robe,dreadmist bracers,dreadmist wraps,dreadmist belt,dreadmist leggings,dreadmist sandals,blade of the new moon,rune band of wizardry,tome of the lost
 ```

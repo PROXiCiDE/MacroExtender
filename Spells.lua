@@ -43,18 +43,40 @@ function ME_GetSpellEfficencay( spell )
         local found = false
         
         if spellTable then
-                for i=spellTable.maxRanks,1,-1 do
-                        local rankTable = spellTable['Rank '..i]
-                        if rankTable then
-                                local mana_cost = rankTable.spellCost
-                                if found == false and (UnitMana("player") > (mana_cost*(1-rankTable.rank/100))) then
-                                        spell=spell.."(Rank "..i..")"
-                                        found = true
-                                end 
+                if string.find(string.lower(spell),"life tap")  then
+                        if Select(2,UnitClass("player")) == "WARLOCK" and UnitManaPct("player") < 100 then
+                                local scale = 563
+                                local mult = 1.2
+                                local rank_mult = {0.38,0.68,0.8,0.8,0.8,0.8}
+                                local base_damage = {30,75,140,220,310,424}
+                                
+                                for i=spellTable.maxRanks,1,-1 do
+                                        local rankTable = spellTable['Rank '..i]
+                                        if rankTable then
+                                                local formula = (base_damage[i] + rank_mult[i] * scale)
+                                                if ((UnitHealth("player") >= formula) and ((UnitManaMax("player") - UnitMana("player")) >= (formula * mult))) then
+                                                        return "Life Tap(Rank "..i..")", true
+                                                end
+                                        end
+                                end
+                        else
+                                return nil,found
+                        end
+                else
+                        for i=spellTable.maxRanks,1,-1 do
+                                local rankTable = spellTable['Rank '..i]
+                                if rankTable then
+                                        local mana_cost = rankTable.spellCost
+                                        if found == false and (UnitMana("player") > (mana_cost*(1-rankTable.rank/100))) then
+                                                spell=spell.."(Rank "..i..")"
+                                                found = true
+                                                break
+                                        end 
+                                end
                         end
                 end
         end
-
+        
         return spell,found
 end
 
@@ -95,7 +117,7 @@ function ME_UpdateSpellBook( ... )
                                         end
                                 end
                         end
-
+                        
                         if ME_SpellTooltipTextLeft4:IsShown() then
                         end
                         
@@ -106,7 +128,7 @@ function ME_UpdateSpellBook( ... )
                                 rank = 1
                                 rankName = "Rank 1"
                         end
-
+                        
                         if not ME_Spells[l_spell] then
                                 ME_Spells[l_spell] = {  maxRanks = rank }
                         else

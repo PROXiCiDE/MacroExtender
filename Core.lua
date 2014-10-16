@@ -64,6 +64,14 @@ SlashCmdList["PXPICK"] = function (msg,editbox)
         end
 end
 
+SLASH_PXEQUIP1 = "/equip"
+SLASH_PXEQUIP2 = "/eq"
+SlashCmdList["PXEQUIP"] = function (msg,editbox)
+        if  msg or msg ~= "" then
+                ME_EquipItem(msg)
+        end
+end
+
 SLASH_PXDISMOUNT1 = "/dismount"
 SlashCmdList["PXDISMOUNT"] = function (msg,editbox)
         if  msg or msg ~= "" then
