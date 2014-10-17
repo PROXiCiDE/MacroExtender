@@ -2,6 +2,15 @@
 -- VERSION HISTORY
 ----------------------------------------------------------------------------------
 
+1.06.2 -
+		Macro condition changes
+		mod has been renamed modifier
+
+		Aliases for channeling (chan),shadowform (shform),equipped (eq),modifier (mod), stance (form)
+			swimming (swim), pethappy (peth), petloyalty (petl), smartcast (sc)
+
+		Macro command changes
+		/castsequence now operates properly with [channeling] condition
 1.06.1 -
 		Macro condition changes
 		buff and debuff now allow to check player buff/debuff with prefix "@" to prevent target=player messing up harmful spell execution, see ReadMe for details

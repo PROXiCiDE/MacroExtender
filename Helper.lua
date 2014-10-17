@@ -439,7 +439,7 @@ function ME_CastSequence( macro )
         end
         
         if action then
-                ExecuteCastSequence(action,selfcast)
+                ExecuteCastSequence(action,selfcast,smartcast)
         end
 end
 

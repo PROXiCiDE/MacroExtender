@@ -144,7 +144,7 @@ local SecureCmdOptionHandlers = {
                 return false
         end,
         
-        mod = function(target, ...)
+        modifier = function(target, ...)
                 local n = table.getn(arg)
                 if ( n > 0 ) then
                         for i=1, n do
@@ -178,7 +178,7 @@ local SecureCmdOptionHandlers = {
                                 end
                         end
                 else
-                        return ME_EventLog.Channeling == true
+                        return ME_EventLog.Channeling
                 end
         end,
         
@@ -286,6 +286,26 @@ local SecureCmdOptionHandlers = {
         
 }
 
+local function SecureCmdOptionsShortcut( options )
+        local SCO_Shortcuts = {
+                chan = "channeling",
+                mod = "modifier",
+                eq = "equipped",
+                swim = "swimming",
+                form = "stance",
+                peth = "pethappy",
+                petl = "petloyalty",
+                shform = "shadowform",
+                sc = "smartcast"
+        }
+        
+        if SCO_Shortcuts[options] then
+                return SCO_Shortcuts[options]
+        end
+        
+        return options
+end
+
 local function SecureCmdOptionCheckOptions(o, ...)
         for i=1, table.getn(arg) do
                 local option = strtrim(arg[i])
@@ -298,7 +318,7 @@ local function SecureCmdOptionCheckOptions(o, ...)
                                 invert = true
                                 option = string.sub(option, 3)
                         end
-                        local handler = SecureCmdOptionHandlers[option]
+                        local handler = SecureCmdOptionHandlers[SecureCmdOptionsShortcut(option)]
                         if ( handler ) then
                                 if ( args ) then
                                         if ( string.find(args, '/', 1, true) ) then
@@ -337,6 +357,7 @@ local function SecureCmdOptionCheckOptions(o, ...)
                 end
         end
 end
+
 
 local function SecureCmdOptionCheckTarget(options)
         local target;
@@ -570,7 +591,7 @@ local function ME_CastSequenceManagerOnUpdate( ... )
         this.elapsed = 0
 end
 
-function ExecuteCastSequence( sequence, target )
+function ExecuteCastSequence( sequence, target, smartcast )
         if not ME_CastSequenceManager then
                 ME_CastSequenceManager = CreateFrame("Frame")
                 ME_CastSequenceManager.elapsed = 0
@@ -602,7 +623,10 @@ function ExecuteCastSequence( sequence, target )
                 entry.timeout = ME_CastSequenceManager.elapsed + tonumber(timeout)
         end
         
-        if (string.find(entry.reset,"shift",1,true) or string.find(entry.reset,"ctrl",1,true) or string.find(entry.reset,"alt",1,true)) and IsModifierKeyDown() then
+        if ((string.find(entry.reset,"mod",1,true) and IsModifierKeyDown()) or
+                (string.find(entry.reset,"shift",1,true) and IsShiftKeyDown()) or
+                (string.find(entry.reset,"ctrl",1,true) and IsControlKeyDown()) or
+                (string.find(entry.reset,"alt",1,true)) and IsAltKeyDown()) then
                 SetCastSequenceIndex(entry,1)
         end
         
@@ -613,13 +637,13 @@ function ExecuteCastSequence( sequence, target )
                         if name then
                                 spell = ME_GetBagItemInfo(name) or ""
                         else
-                                spells = ""
+                                spell = ""
                         end
                         entry.spells[entry.index] = spell
                 end
                 SecureCmdUseItem(name, bag, slot, target)
         else
-                CastSpellByName(spell,target)
+                ME_CastOrUseItem(spell,target,smartcast)
         end
         
         if spell == "" then

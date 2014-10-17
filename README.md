@@ -9,7 +9,9 @@ MacroExtender addon for 1.12.1 World of Warcraft
 > MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more
 
 ##Version
-1.06.1
+1.06.2
+
+Read the **Changelog.txt** for details
 
 #Installination
   - Download **MacroExtender**
@@ -19,39 +21,41 @@ MacroExtender addon for 1.12.1 World of Warcraft
 #Conditional Statements
 These can also be checked for falseness instead of trueness by prefixing them with **"no"**. For example, **[nocombat]** is a valid conditional and will only perform the actions following it if you are not in combat.
 
+*Aliases are for creating a macro shorter if you run out of space*
+
 **Retail Conditions**
 
-condition|paramater|description
-:--|:--|:--|
-channeling|spell1/spell2/../spellN|Is the player currently channeling a spell
-combat||In combat
-dead||Target is dead
-equipped|item type|item type is equipped (item type can be an inventory slot, item type, or item subtype)
-exists||Target exists
-pet|pet type|The given pet is out
-harm||Can cast harmful spells on the target
-help||Can cast helpful spells on the target
-mod|shift/ctrl/alt|Holding the given key
-mounted||Self explanatory
-party||Target is in your party
-raid||Target is in your raid/party
-stance|0/1/2/.../n|In a stance
-group|party/raid|Player is in the given type of group (if argument is omitted, defaults to party)
-stealth||Stealthed (Rogue & Druid only self explanatory
-swimming||Only detects when submerged in water and the Breathing Timer is available, will return false if in Aquatic Form or anytype of water breathing buff
+condition|alias|paramater|description
+:--|:--|:--|:--|
+channeling|chan|spell1/spell2/../spellN|Is the player currently channeling a spell
+combat|||In combat
+dead|||Target is dead
+equipped|eq|item type|item type is equipped (item type can be an inventory slot, item type, or item subtype)
+exists|||Target exists
+pet||pet type|The given pet is out
+harm|||Can cast harmful spells on the target
+help|||Can cast helpful spells on the target
+modifier|mod|shift/ctrl/alt|Holding the given key
+mounted|||Self explanatory
+party|||Target is in your party
+raid|||Target is in your raid/party
+stance|form|0/1/2/.../n|In a stance
+group||party/raid|Player is in the given type of group (if argument is omitted, defaults to party)
+stealth|||Stealthed (Rogue & Druid only self explanatory
+swimming|swim||Only detects when submerged in water and the Breathing Timer is available, will return false if in Aquatic Form or anytype of water breathing buff
 ---
 **Non Retail Conditions**
 
-condition|paramater|description
+condition|alias|paramater|description
 :--|:--|:--|
-mana|relational operators #n|Target mana is compared with #n
-health|relational operators #n|Target health is compared with #n
-shadowform||Priest is currently in shadowform
-petloyalty|1/2/.../n|Hunter's pet loyalty level
-pethappy||Hunter's pet is happy
-smartcast||Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank
-buff|texture|Contains buff texture
-debuff|texture|Contains debuff texture
+mana||relational operators #n|Target mana is compared with #n
+health||relational operators #n|Target health is compared with #n
+shadowform|shform||Priest is currently in shadowform
+petloyalty|petl|1/2/.../n|Hunter's pet loyalty level
+pethappy|peth||Hunter's pet is happy
+smartcast|sc||Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank
+buff||texture|Contains buff texture
+debuff||texture|Contains debuff texture
 ---
 
 >Relational operators for mana / health condition for comparison
@@ -89,6 +93,11 @@ Multiple paramaters can be included by seperating them with a *slash* [**/**] ch
 Following example checks if any modifier key is down and not channeling the spell drain soul. If requirements are not meet it will cast the next sequence in the list
 ```
 /castsequence [mod,nochanneling:drain soul]drain soul;reset=target/combat corruption,curse of agony,shadow bolt,shadow bolt,shadow bolt,shadow bolt
+```
+
+To prevent the above example from continuing with the next sequence in the list which could interrupt your channeling spell, add the **[nochan]** which is the *alias for nochanneling*.
+```
+/castsequence [mod,nochanneling:drain soul]drain soul;[nochan]reset=target/combat corruption,curse of agony,shadow bolt,shadow bolt,shadow bolt,shadow bolt
 ```
 
 ***Buff / Debuff***

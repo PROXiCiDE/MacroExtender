@@ -8,7 +8,8 @@
 <p>MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more</p>
 </blockquote>
 <h2 id="version">Version</h2>
-<p>1.06.1</p>
+<p>1.06.2</p>
+<p>Read the <strong>Changelog.txt</strong> for details</p>
 <h1 id="installination">Installination</h1>
 <ul>
 <li>Download <strong>MacroExtender</strong></li>
@@ -17,11 +18,13 @@
 </ul>
 <h1 id="conditional-statements">Conditional Statements</h1>
 <p>These can also be checked for falseness instead of trueness by prefixing them with <strong>"no"</strong>. For example, <strong>[nocombat]</strong> is a valid conditional and will only perform the actions following it if you are not in combat.</p>
+<p><em>Aliases are for creating a macro shorter if you run out of space</em></p>
 <p><strong>Retail Conditions</strong></p>
 <table>
 <thead>
 <tr>
 <th style="text-align:left">condition</th>
+<th style="text-align:left">alias</th>
 <th style="text-align:left">paramater</th>
 <th style="text-align:left">description</th>
 </tr>
@@ -29,45 +32,54 @@
 <tbody>
 <tr>
 <td style="text-align:left">channeling</td>
+<td style="text-align:left">chan</td>
 <td style="text-align:left">spell1/spell2/../spellN</td>
 <td style="text-align:left">Is the player currently channeling a spell</td>
 </tr>
 <tr>
 <td style="text-align:left">combat</td>
 <td style="text-align:left"></td>
+<td style="text-align:left"></td>
 <td style="text-align:left">In combat</td>
 </tr>
 <tr>
 <td style="text-align:left">dead</td>
 <td style="text-align:left"></td>
+<td style="text-align:left"></td>
 <td style="text-align:left">Target is dead</td>
 </tr>
 <tr>
 <td style="text-align:left">equipped</td>
+<td style="text-align:left">eq</td>
 <td style="text-align:left">item type</td>
 <td style="text-align:left">item type is equipped (item type can be an inventory slot, item type, or item subtype)</td>
 </tr>
 <tr>
 <td style="text-align:left">exists</td>
 <td style="text-align:left"></td>
+<td style="text-align:left"></td>
 <td style="text-align:left">Target exists</td>
 </tr>
 <tr>
 <td style="text-align:left">pet</td>
+<td style="text-align:left"></td>
 <td style="text-align:left">pet type</td>
 <td style="text-align:left">The given pet is out</td>
 </tr>
 <tr>
 <td style="text-align:left">harm</td>
 <td style="text-align:left"></td>
+<td style="text-align:left"></td>
 <td style="text-align:left">Can cast harmful spells on the target</td>
 </tr>
 <tr>
 <td style="text-align:left">help</td>
 <td style="text-align:left"></td>
+<td style="text-align:left"></td>
 <td style="text-align:left">Can cast helpful spells on the target</td>
 </tr>
 <tr>
+<td style="text-align:left">modifier</td>
 <td style="text-align:left">mod</td>
 <td style="text-align:left">shift/ctrl/alt</td>
 <td style="text-align:left">Holding the given key</td>
@@ -75,35 +87,42 @@
 <tr>
 <td style="text-align:left">mounted</td>
 <td style="text-align:left"></td>
+<td style="text-align:left"></td>
 <td style="text-align:left">Self explanatory</td>
 </tr>
 <tr>
 <td style="text-align:left">party</td>
+<td style="text-align:left"></td>
 <td style="text-align:left"></td>
 <td style="text-align:left">Target is in your party</td>
 </tr>
 <tr>
 <td style="text-align:left">raid</td>
 <td style="text-align:left"></td>
+<td style="text-align:left"></td>
 <td style="text-align:left">Target is in your raid/party</td>
 </tr>
 <tr>
 <td style="text-align:left">stance</td>
+<td style="text-align:left">form</td>
 <td style="text-align:left">0/1/2/.../n</td>
 <td style="text-align:left">In a stance</td>
 </tr>
 <tr>
 <td style="text-align:left">group</td>
+<td style="text-align:left"></td>
 <td style="text-align:left">party/raid</td>
 <td style="text-align:left">Player is in the given type of group (if argument is omitted, defaults to party)</td>
 </tr>
 <tr>
 <td style="text-align:left">stealth</td>
 <td style="text-align:left"></td>
+<td style="text-align:left"></td>
 <td style="text-align:left">Stealthed (Rogue & Druid only self explanatory</td>
 </tr>
 <tr>
 <td style="text-align:left">swimming</td>
+<td style="text-align:left">swim</td>
 <td style="text-align:left"></td>
 <td style="text-align:left">Only detects when submerged in water and the Breathing Timer is available, will return false if in Aquatic Form or anytype of water breathing buff</td>
 </tr>
@@ -115,50 +134,59 @@
 <thead>
 <tr>
 <th style="text-align:left">condition</th>
+<th style="text-align:left">alias</th>
 <th style="text-align:left">paramater</th>
-<th style="text-align:left">description</th>
+<th>description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left">mana</td>
+<td style="text-align:left"></td>
 <td style="text-align:left">relational operators #n</td>
-<td style="text-align:left">Target mana is compared with #n</td>
+<td>Target mana is compared with #n</td>
 </tr>
 <tr>
 <td style="text-align:left">health</td>
+<td style="text-align:left"></td>
 <td style="text-align:left">relational operators #n</td>
-<td style="text-align:left">Target health is compared with #n</td>
+<td>Target health is compared with #n</td>
 </tr>
 <tr>
 <td style="text-align:left">shadowform</td>
+<td style="text-align:left">shform</td>
 <td style="text-align:left"></td>
-<td style="text-align:left">Priest is currently in shadowform</td>
+<td>Priest is currently in shadowform</td>
 </tr>
 <tr>
 <td style="text-align:left">petloyalty</td>
+<td style="text-align:left">petl</td>
 <td style="text-align:left">1/2/.../n</td>
-<td style="text-align:left">Hunter's pet loyalty level</td>
+<td>Hunter's pet loyalty level</td>
 </tr>
 <tr>
 <td style="text-align:left">pethappy</td>
+<td style="text-align:left">peth</td>
 <td style="text-align:left"></td>
-<td style="text-align:left">Hunter's pet is happy</td>
+<td>Hunter's pet is happy</td>
 </tr>
 <tr>
 <td style="text-align:left">smartcast</td>
+<td style="text-align:left">sc</td>
 <td style="text-align:left"></td>
-<td style="text-align:left">Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank</td>
+<td>Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank</td>
 </tr>
 <tr>
 <td style="text-align:left">buff</td>
+<td style="text-align:left"></td>
 <td style="text-align:left">texture</td>
-<td style="text-align:left">Contains buff texture</td>
+<td>Contains buff texture</td>
 </tr>
 <tr>
 <td style="text-align:left">debuff</td>
+<td style="text-align:left"></td>
 <td style="text-align:left">texture</td>
-<td style="text-align:left">Contains debuff texture</td>
+<td>Contains debuff texture</td>
 </tr>
 </tbody>
 </table>
@@ -258,6 +286,8 @@
 <p><strong>condition</strong>:<em>param1/param2/.../paramN</em></p>
 <p>Following example checks if any modifier key is down and not channeling the spell drain soul. If requirements are not meet it will cast the next sequence in the list</p>
 <pre><code>/castsequence [mod,nochanneling:drain soul]drain soul;reset=target/combat corruption,curse of agony,shadow bolt,shadow bolt,shadow bolt,shadow bolt
+</code></pre><p>To prevent the above example from continuing with the next sequence in the list which could interrupt your channeling spell, add the <strong>[nochan]</strong> which is the <em>alias for nochanneling</em>.</p>
+<pre><code>/castsequence [mod,nochanneling:drain soul]drain soul;[nochan]reset=target/combat corruption,curse of agony,shadow bolt,shadow bolt,shadow bolt,shadow bolt
 </code></pre><p><strong><em>Buff / Debuff</em></strong></p>
 <blockquote>
 <p>Adding a prefix "<strong>@</strong>"  in the front of the <em>Buff/Debuff</em> will check the player instead of the target. This allows you too still direct harmful spells at the target</p>
