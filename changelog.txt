@@ -2,6 +2,11 @@
 -- VERSION HISTORY
 ----------------------------------------------------------------------------------
 
+1.06 -
+		Macro condtion changes
+		channeling now accepts a spell paramater
+
+		fixed bugs that included a spell rank
 1.05 -
 		Macro condtion changes
 		mana / health condtion checks via percentage base

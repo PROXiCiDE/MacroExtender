@@ -1,16 +1,34 @@
 ME_Spells = {
         Casting = false,
         Channeling = false,
-        ChannelSpell = nil,
-        Spell = nil,
+        ChannelSpell = "",
+        Spell = "",
         ChanDuration = nil,
         Swimming = false,
 }
 
-function ME_GetSpellTable( spell )
-        spell = string.lower(spell)
-        if ME_Spells[spell] then
-                return ME_Spells[spell]
+--Split the spell and rank, incase the player includes the rank of the spell in /castx
+function ME_SpellSplitRank( spell )
+        local found,_,f_spell,rank = string.find(spell,"([%a%s]+)%s*(%b())")
+        if found then
+                rank = strtrim(string.sub(rank,2,-2))
+                rank = string.gsub(rank,"(%a)(.*)", function (a,b) return string.upper(a)..b end)
+                spell = strtrim(f_spell)
+        end
+        return spell,rank
+end
+
+function ME_GetSpellTable( spell, ignoreRank)
+        ignoreRank = ignoreRank or true
+        local f_spell,f_rank = ME_SpellSplitRank(string.lower(spell))
+        if ME_Spells[f_spell] then
+                if f_rank and not ignoreRank then
+                        if ME_Spells[f_spell][f_rank] then
+                                return ME_Spells[f_spell][f_rank]
+                        end
+                else
+                        return ME_Spells[f_spell]
+                end
         end
         return nil
 end
@@ -130,7 +148,7 @@ function ME_UpdateSpellBook( ... )
                         end
                         
                         if not ME_Spells[l_spell] then
-                                ME_Spells[l_spell] = {  maxRanks = rank }
+                                ME_Spells[l_spell] = {  maxRanks = rank, isChanneled = isChanneled }
                         else
                                 local oldMaxRank = ME_Spells[l_spell].maxRanks
                                 if (not oldMaxRank or (rank > oldMaxRank)) then
@@ -146,7 +164,6 @@ function ME_UpdateSpellBook( ... )
                                         spellCost = spellCost, 
                                         rank = rank, 
                                         spellTexture = spellTexture,
-                                        isChanneled = isChanneled
                                 }
                         end
                 end

@@ -8,8 +8,14 @@
 <p>MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more</p>
 </blockquote>
 <h2 id="version">Version</h2>
-<p>1.05</p>
-<h2 id="conditional-statements">Conditional Statements</h2>
+<p>1.06</p>
+<h1 id="installination">Installination</h1>
+<ul>
+<li>Download <strong>MacroExtender</strong></li>
+<li>Create a directory into your <em>World of Warcraft/Interface/AddOns</em> folder named <strong>MacroExtender</strong></li>
+<li>Extract contents of downloaded file into that new folder</li>
+</ul>
+<h1 id="conditional-statements">Conditional Statements</h1>
 <p>These can also be checked for falseness instead of trueness by prefixing them with <strong>"no"</strong>. For example, <strong>[nocombat]</strong> is a valid conditional and will only perform the actions following it if you are not in combat.</p>
 <p><strong>Retail Conditions</strong></p>
 <table>
@@ -23,7 +29,7 @@
 <tbody>
 <tr>
 <td style="text-align:left">channeling</td>
-<td style="text-align:left"></td>
+<td style="text-align:left">spell1/spell2/../spellN</td>
 <td style="text-align:left">Is the player currently channeling a spell</td>
 </tr>
 <tr>
@@ -247,6 +253,9 @@
 </tbody>
 </table>
 <hr>
+<h2 id="paramater-usage">Paramater Usage</h2>
+<p>Multiple paramaters can be included by seperating them with a <em>slash</em> [<strong>/</strong>] check reference table to see which is supported</p>
+<p>condition:<em>param1/param2/.../paramN</em></p>
 <p><strong><em>Pet commands</em></strong></p>
 <table>
 <thead>
@@ -305,7 +314,7 @@
 </tbody>
 </table>
 <hr>
-<h2 id="examples">Examples</h2>
+<h1 id="examples">Examples</h1>
 <p><strong>Warrior</strong></p>
 <pre><code>/castx [stance:1]Heroic Strike;Rend
 /castx [equipped:shields]defensive stance
@@ -330,6 +339,8 @@
 
 /petassist [pet,nomod,combat]
 /petattack [pet,mod:shift]
+
+/castx [nochanneling:drain life]Drain Life
 </code></pre><p><strong>Druid</strong></p>
 <pre><code>/castx [nostance:3]cat form;[stance:3,nostealth]prowl;pounce
 </code></pre><p><strong>Misc</strong></p>

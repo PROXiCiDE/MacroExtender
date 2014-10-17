@@ -8,19 +8,22 @@ MacroExtender addon for 1.12.1 World of Warcraft
 
 > MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more
 
-Version
-----
-1.05
+##Version
+1.06
 
-Conditional Statements
------------
+#Installination
+  - Download **MacroExtender**
+  - Create a directory into your *World of Warcraft/Interface/AddOns* folder named **MacroExtender**
+  - Extract contents of downloaded file into that new folder
+
+#Conditional Statements
 These can also be checked for falseness instead of trueness by prefixing them with **"no"**. For example, **[nocombat]** is a valid conditional and will only perform the actions following it if you are not in combat.
 
 **Retail Conditions**
 
 condition|paramater|description
 :--|:--|:--|
-channeling||Is the player currently channeling a spell
+channeling|spell1/spell2/../spellN|Is the player currently channeling a spell
 combat||In combat
 dead||Target is dead
 equipped|item type|item type is equipped (item type can be an inventory slot, item type, or item subtype)
@@ -77,6 +80,12 @@ stopcasting||Stop casting or channeling a spell
 dismount||Dismounts your character
 cancelform||Cancels your current shapeshift/shadow/ghost wolf form
 ---
+
+##Paramater Usage
+Multiple paramaters can be included by seperating them with a *slash* [**/**] check reference table to see which is supported
+
+condition:*param1/param2/.../paramN*
+
 ___Pet commands___
 
 command|description
@@ -96,8 +105,7 @@ command|description
 :--|:--
 reload|Reloads the user interface
 ---
-Examples
------------
+#Examples
 __Warrior__
 ```
 /castx [stance:1]Heroic Strike;Rend
@@ -132,6 +140,8 @@ __Warlock__
 
 /petassist [pet,nomod,combat]
 /petattack [pet,mod:shift]
+
+/castx [nochanneling:drain life]Drain Life
 ```
 
 __Druid__

@@ -161,7 +161,25 @@ local SecureCmdOptionHandlers = {
         end,
         
         channeling = function(target, ...)
-                return ME_EventLog.Channeling == true
+                local spell = ME_Spells.ChannelSpell
+                if not spell or spell == "" then 
+                        return false 
+                end
+                
+                local spell = string.lower(spell or "")
+                local n = table.getn(arg)
+                if ( n > 0 ) then
+                        if ME_EventLog.Channeling then
+                                for i=1, n do
+                                        local desired = string.lower(arg[i] or "")
+                                        if desired == spell then
+                                                return true
+                                        end
+                                end
+                        end
+                else
+                        return ME_EventLog.Channeling == true
+                end
         end,
         
         --

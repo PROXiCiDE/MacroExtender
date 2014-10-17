@@ -388,6 +388,14 @@ function ME_CastOrUseItem(action, selfcast,smartcast)
                 end
                 
                 if action then
+                        
+                        local spellTable = ME_GetSpellTable(action)
+                        if spellTable then
+                                if spellTable.isChanneled then
+                                        ME_Spells.ChannelSpell = action
+                                end
+                        end
+                        
                         CastSpellByName(action,selfcast)
                 end
         end

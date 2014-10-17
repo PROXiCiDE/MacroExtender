@@ -101,12 +101,14 @@ local function ME_FrameOnEvent( ... )
                 ME_EventLog.Casting = false
                 ME_EventLog.Channeling = false
                 ME_EventLog.Spell = ""
+                ME_EventLog.ChannelSpell = ""
         end
         
         if event == "SPELLCAST_START" then
                 ME_EventLog.Spell = arg1 or ""
                 ME_EventLog.Casting = true
                 ME_EventLog.Channeling = false
+                ME_EventLog.ChannelSpell = ""
                 
         end
         
@@ -119,13 +121,13 @@ local function ME_FrameOnEvent( ... )
         if event == "SPELLCAST_CHANNEL_UPDATE" then
                 if arg1 == 0 then
                         ME_EventLog.Channeling = false
-                        ME_EventLog.ChannelSpell = nil
+                        ME_EventLog.ChannelSpell = ""
                 end
         end
         
         if event == "SPELLCAST_CHANNEL_STOP" then
                 ME_EventLog.Channeling = false
-                ME_EventLog.ChannelSpell = nil
+                ME_EventLog.ChannelSpell = ""
         end
         
         if event == "SPELLCAST_STOP" then
