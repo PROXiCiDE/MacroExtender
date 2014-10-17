@@ -255,18 +255,26 @@ local SecureCmdOptionHandlers = {
         end,
         
         buff = function(target, desired)
-                if desired ~= nil and desired ~= "" and string.find(desired,"([%w%_]+)") then
-                        if (UnitExists(target) and HasBuff(desired,target)) then
-                                return true
+                if desired ~= nil and desired ~= "" and string.find(desired,"([@%w%_]+)") then
+                        if string.find(desired,"@") then
+                                return HasBuff(string.sub(desired,2))
+                        else
+                                if (UnitExists(target) and HasBuff(desired,target)) then
+                                        return true
+                                end
                         end
                 end
                 return false    
         end,
         
         debuff = function(target, desired)
-                if desired ~= nil and desired ~= "" and string.find(desired,"([%w%_]+)") then
-                        if (UnitExists(target) and HasDebuff(desired,target)) then
-                                return true
+                if desired ~= nil and desired ~= "" and string.find(desired,"([@%w%_]+)") then
+                        if string.find(desired,"@") then
+                                return HasDebuff(string.sub(desired,2))
+                        else
+                                if (UnitExists(target) and HasDebuff(desired,target)) then
+                                        return true
+                                end
                         end
                 end
                 return false    

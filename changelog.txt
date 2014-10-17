@@ -2,14 +2,19 @@
 -- VERSION HISTORY
 ----------------------------------------------------------------------------------
 
+1.06.1 -
+		Macro condition changes
+		buff and debuff now allow to check player buff/debuff with prefix "@" to prevent target=player messing up harmful spell execution, see ReadMe for details
+
+		misc bug fixes
 1.06 -
-		Macro condtion changes
+		Macro condition changes
 		channeling now accepts a spell paramater
 
 		fixed bugs that included a spell rank
 1.05 -
-		Macro condtion changes
-		mana / health condtion checks via percentage base
+		Macro condition changes
+		mana / health condition checks via percentage base
 		equipped condition now accepts iventory slots
 		smartcast condition now supports Life Tap, must meet requirements such as Mana < 100%, will down rank life tap to the corresponding mana deficiency
 

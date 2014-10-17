@@ -18,11 +18,11 @@ function ME_SpellSplitRank( spell )
         return spell,rank
 end
 
-function ME_GetSpellTable( spell, ignoreRank)
-        ignoreRank = ignoreRank or true
+function ME_GetSpellTable( spell, rankOnly)
+        rankOnly = rankOnly or false
         local f_spell,f_rank = ME_SpellSplitRank(string.lower(spell))
         if ME_Spells[f_spell] then
-                if f_rank and not ignoreRank then
+                if f_rank and rankOnly then
                         if ME_Spells[f_spell][f_rank] then
                                 return ME_Spells[f_spell][f_rank]
                         end

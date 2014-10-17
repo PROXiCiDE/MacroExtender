@@ -8,7 +8,7 @@
 <p>MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more</p>
 </blockquote>
 <h2 id="version">Version</h2>
-<p>1.06</p>
+<p>1.06.1</p>
 <h1 id="installination">Installination</h1>
 <ul>
 <li>Download <strong>MacroExtender</strong></li>
@@ -255,8 +255,22 @@
 <hr>
 <h2 id="paramater-usage">Paramater Usage</h2>
 <p>Multiple paramaters can be included by seperating them with a <em>slash</em> [<strong>/</strong>] check reference table to see which is supported</p>
-<p>condition:<em>param1/param2/.../paramN</em></p>
-<p><strong><em>Pet commands</em></strong></p>
+<p><strong>condition</strong>:<em>param1/param2/.../paramN</em></p>
+<p>Following example checks if any modifier key is down and not channeling the spell drain soul. If requirements are not meet it will cast the next sequence in the list</p>
+<pre><code>/castsequence [mod,nochanneling:drain soul]drain soul;reset=target/combat corruption,curse of agony,shadow bolt,shadow bolt,shadow bolt,shadow bolt
+</code></pre><p><strong><em>Buff / Debuff</em></strong></p>
+<blockquote>
+<p>Adding a prefix "<strong>@</strong>"  in the front of the <em>Buff/Debuff</em> will check the player instead of the target. This allows you too still direct harmful spells at the target</p>
+</blockquote>
+<p>Following example checks for Nightfall Proc on the player if found will cast shadow bolt at target.
+Castsequence will reset every 12 seconds / combat or target changes</p>
+<h4 id="correct-way">Correct way</h4>
+<pre><code>/castx [buff:@Shadow_Twilight]shadow bolt
+/castsequence [nochanneling,pet] reset=12/combat/target corruption,curse of agony,immolate
+</code></pre><h4 id="wrong-way">Wrong way</h4>
+<p>This will not succeed as it will target the player to cast <strong>shadow bolt</strong></p>
+<pre><code>/castx [target=player,buff:Shadow_Twilight]shadow bolt
+</code></pre><p><strong><em>Pet commands</em></strong></p>
 <table>
 <thead>
 <tr>

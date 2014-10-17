@@ -9,7 +9,7 @@ MacroExtender addon for 1.12.1 World of Warcraft
 > MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more
 
 ##Version
-1.06
+1.06.1
 
 #Installination
   - Download **MacroExtender**
@@ -84,7 +84,31 @@ cancelform||Cancels your current shapeshift/shadow/ghost wolf form
 ##Paramater Usage
 Multiple paramaters can be included by seperating them with a *slash* [**/**] check reference table to see which is supported
 
-condition:*param1/param2/.../paramN*
+**condition**:*param1/param2/.../paramN*
+
+Following example checks if any modifier key is down and not channeling the spell drain soul. If requirements are not meet it will cast the next sequence in the list
+```
+/castsequence [mod,nochanneling:drain soul]drain soul;reset=target/combat corruption,curse of agony,shadow bolt,shadow bolt,shadow bolt,shadow bolt
+```
+
+***Buff / Debuff***
+>Adding a prefix "**@**"  in the front of the *Buff/Debuff* will check the player instead of the target. This allows you too still direct harmful spells at the target
+
+Following example checks for Nightfall Proc on the player if found will cast shadow bolt at target.
+Castsequence will reset every 12 seconds / combat or target changes
+
+####Correct way
+```
+/castx [buff:@Shadow_Twilight]shadow bolt
+/castsequence [nochanneling,pet] reset=12/combat/target corruption,curse of agony,immolate
+```
+
+####Wrong way
+This will not succeed as it will target the player to cast **shadow bolt**
+```
+/castx [target=player,buff:Shadow_Twilight]shadow bolt
+```
+
 
 ___Pet commands___
 

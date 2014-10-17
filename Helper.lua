@@ -129,13 +129,16 @@ end
 
 function HasDebuff(texture, unit)
         unit = unit or "player"
+        texture = string.lower(texture or "")
         local idx = 1
-        while (UnitDebuff(unit, idx)) do
-                local textureDebuff, stacks = UnitDebuff(unit, idx)
-                if (string.find(textureDebuff, texture)) then
-                        return true, stacks
+        if texture or texture ~= "" then
+                while (UnitDebuff(unit, idx)) do
+                        local textureDebuff, stacks = UnitDebuff(unit, idx)
+                        if (string.find(string.lower(textureDebuff), texture)) then
+                                return true, stacks
+                        end
+                        idx = idx + 1
                 end
-                idx = idx + 1
         end
         return false, 0
 end
@@ -144,25 +147,31 @@ function GetDebuffCount(texture, unit)
         unit = unit or "player"
         local idx = 1
         local count = 0
-        while (UnitDebuff(unit, idx)) do
-                local textureDebuff, stacks = UnitDebuff(unit, idx)
-                if (string.find(textureDebuff, texture)) then
-                        count = count + 1
+        texture = string.lower(texture or "")
+        if texture or texture ~= "" then
+                while (UnitDebuff(unit, idx)) do
+                        local textureDebuff, stacks = UnitDebuff(unit, idx)
+                        if (string.find(tring.lower(textureBuff), texture)) then
+                                count = count + 1
+                        end
+                        idx = idx + 1
                 end
-                idx = idx + 1
         end
         return count
 end
 
 function HasBuff(texture, unit)
         unit = unit or "player"
+        texture = string.lower(texture or "")
         local idx = 1
-        while (UnitBuff(unit, idx)) do
-                local textureBuff, stacks = UnitBuff(unit, idx)
-                if (string.find(textureBuff, texture)) then
-                        return true, stacks
+        if texture or texture ~= "" then
+                while (UnitBuff(unit, idx)) do
+                        local textureBuff, stacks = UnitBuff(unit, idx)
+                        if (string.find(string.lower(textureBuff), texture)) then
+                                return true, stacks
+                        end
+                        idx = idx + 1
                 end
-                idx = idx + 1
         end
         return false, 0
 end
