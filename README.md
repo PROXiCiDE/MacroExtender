@@ -47,7 +47,7 @@ swimming|swim||Only detects when submerged in water and the Breathing Timer is a
 **Non Retail Conditions**
 
 condition|alias|paramater|description
-:--|:--|:--|
+:--|:--|:--|:--|
 mana||relational operators #n|Target mana is compared with #n
 health||relational operators #n|Target health is compared with #n
 shadowform|shform||Priest is currently in shadowform
