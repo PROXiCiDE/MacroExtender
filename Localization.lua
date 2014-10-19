@@ -7,7 +7,7 @@ end })
 local LOCALE = GetLocale()
 
 function ME_GetLocale( ... )
-	return L,LOCALE
+        return L,LOCALE
 end
 
 if string.find(LOCALE,"^en") then return end

@@ -477,13 +477,13 @@ function SecureCmdItemParse(item)
         return item, bag, slot
 end
 
-function SecureCmdUseItem(name, bag, slot, target)
+function SecureCmdUseItem(name, bag, slot, target, smartcast)
         if bag then
                 UseContainerItem(bag, slot, target)
         elseif slot then
                 UseInventoryItem(slot)
         else
-                ME_UseItemByName(name, target)
+                ME_UseItemByName(name, target, smartcast)
         end
 end
 
@@ -513,7 +513,7 @@ local function SetNextCastSequence(sequence, entry)
         end
 end
 
-local function CreateCastSquenceActions( tbl, ... )
+local function CreateCastSquenceActions( smartcast, tbl, ... )
         tbl.spells = {}
         tbl.items = {}
         local index = 0
@@ -521,7 +521,7 @@ local function CreateCastSquenceActions( tbl, ... )
                 local action = strtrim(arg[i])
                 if action and action ~= "" then
                         index = index + 1
-                        if (ME_GetBagItemInfo(action) or Select(3,SecureCmdItemParse(action))) then
+                        if (ME_GetBagItemInfo(action,smartcast) or Select(3,SecureCmdItemParse(action))) then
                                 tbl.items[index] = action
                                 tbl.spells[index] = action
                         else
@@ -612,7 +612,7 @@ function ExecuteCastSequence( sequence, target, smartcast )
                         spells = sequence
                 end
                 entry = {}
-                CreateCastSquenceActions(entry,strsplit(",",spells))
+                CreateCastSquenceActions(smartcast,entry,strsplit(",",spells))
                 entry.reset = string.lower(reset or "")
                 ME_CastSequenceList[sequence] = entry
                 entry.index = 1
@@ -635,13 +635,13 @@ function ExecuteCastSequence( sequence, target, smartcast )
                 local name,bag,slot = SecureCmdItemParse(item)
                 if slot then
                         if name then
-                                spell = ME_GetBagItemInfo(name) or ""
+                                spell = ME_GetBagItemInfo(name,smartcast) or ""
                         else
                                 spell = ""
                         end
                         entry.spells[entry.index] = spell
                 end
-                SecureCmdUseItem(name, bag, slot, target)
+                SecureCmdUseItem(name, bag, slot, target, smartcast)
         else
                 ME_CastOrUseItem(spell,target,smartcast)
         end

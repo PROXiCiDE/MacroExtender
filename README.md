@@ -9,7 +9,7 @@ MacroExtender addon for 1.12.1 World of Warcraft
 > MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more
 
 ##Version
-1.06.2
+1.06.3
 
 Read the **Changelog.txt** for details
 
@@ -53,7 +53,7 @@ health||relational operators #n|Target health is compared with #n
 shadowform|shform||Priest is currently in shadowform
 petloyalty|petl|1/2/.../n|Hunter's pet loyalty level
 pethappy|peth||Hunter's pet is happy
-smartcast|sc||Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank
+smartcast|||Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank
 buff||texture|Contains buff texture
 debuff||texture|Contains debuff texture
 ---
@@ -175,6 +175,39 @@ __Warlock__
 /petattack [pet,mod:shift]
 
 /castx [nochanneling:drain life]Drain Life
+
+/eq [smartcast]firestone
+```
+
+>To create a warlock healthstone without repeative editing of a macro each spell rank learnt, use the smartcast option. Passing the spell without any rank information such as *minor/lesser/../major* If major is learnt by the player then it will cast *Create Soulstone (Major)()* automatically for the player if the mana requirement is met, if not it will down rank until successful. This works with all ***Create [Spell's]/Conjure [Spell's]***,
+
+```
+/castx [smartcast]create healthstone
+```
+
+>To use the best healthstone found in the player inventory ordered as follows *major/greater/../lesser*
+
+```
+/use [smartcast]healthstone
+```
+
+>Create healthstone while a modifier key is down otherwise use the healthstone
+
+```
+/castx [mod,smartcast]create healthstone
+/use [nomod,smartcast]healthstone
+```
+
+>Bellow is equivalent of the example above just shorter
+
+```
+/castx [mod,smartcast]create healthstone;[smartcast]healthstone
+```
+
+>To use the best conjured mana crystal found in the player inventory ordered as follows *ruby/citrine/jade/agate*
+
+```
+/use [smartcast]conjure mana
 ```
 
 __Druid__

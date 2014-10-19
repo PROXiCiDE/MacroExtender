@@ -2,6 +2,16 @@
 -- VERSION HISTORY
 ----------------------------------------------------------------------------------
 
+1.06.3 -
+		IMPORTANT:
+			Smartcast last build said it had a alias, it was my mistake i had removed it and realized that it would probably cost complications
+			later on, ReadMe has been updated
+
+		Macro condition changes
+		smartcast option will now work for WARLOCK: soulstone,healthstone,firestone,spellstone, MAGE: conjured mana crystals
+
+		Macro command changes
+		/equip and /use will now lookup warlock/mage class items such as healthstones/firestone/../mana crystal etc and use the highest level one found in bag
 1.06.2 -
 		Macro condition changes
 		mod has been renamed modifier

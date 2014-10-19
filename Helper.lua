@@ -387,17 +387,16 @@ function ME_CheckResultsFromTable( res, tbl )
         return nil
 end
 
-function ME_CastOrUseItem(action, selfcast,smartcast)
+function ME_CastOrUseItem(action, selfcast, smartcast)
         local name, bag, slot = SecureCmdItemParse(action)
-        if slot or ME_GetBagItemInfo(name) then
-                SecureCmdUseItem(name,bag,slot,selfcast)
+        if slot or ME_GetBagItemInfo(name, smartcast) then
+                SecureCmdUseItem(name,bag,slot,selfcast, smartcast)
         else
                 if smartcast then
                         action = Select(1,ME_GetSpellEfficencay(action))
                 end
                 
                 if action then
-                        
                         local spellTable = ME_GetSpellTable(action)
                         if spellTable then
                                 if spellTable.isChanneled then
@@ -457,23 +456,24 @@ function ME_PickItem( macro )
 end
 
 function ME_EquipItem( macro )
-        local function EquipFromList( ... )
+        local function EquipFromList( smartcast, ... )
                 for i=1,table.getn(arg) do
                         local item = arg[i]
                         if item then
                                 local name, bag, slot = SecureCmdItemParse(item)
-                                if slot or ME_GetBagItemInfo(name) then
-                                        if ME_IsEquippableByClass(name) then
-                                                SecureCmdUseItem(name,bag,slot,false)
+                                local item = ME_GetBagItemInfo(name, smartcast) or name
+                                if slot or item then
+                                        if ME_IsEquippableByClass(item) then
+                                                SecureCmdUseItem(item,bag,slot,false, smartcast)
                                         end
                                 end
                         end
                 end
         end
         
-        local actions = SecureCmdOptionParse(macro)
+        local actions,target,smartcast = SecureCmdOptionParse(macro)
         if actions then
-                EquipFromList(strsplit(",",actions))
+                EquipFromList(smartcast,strsplit(",",actions))
         end
 end
 
@@ -500,4 +500,15 @@ function ME_GenericFunction( macro, fn )
         if SecureCmdOptionParseConditions(macro) then
                 fn()
         end
+end
+
+function ME_SortNumTable( Table, Desc )
+        local temp = {}
+        for key, _ in pairs(Table) do table.insert(temp, key) end
+        if ( Desc ) then
+                table.sort(temp, function(a, b) return a < b end)
+        else
+                table.sort(temp, function(a, b) return a > b end)
+        end
+        return temp
 end
