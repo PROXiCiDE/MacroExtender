@@ -45,7 +45,7 @@
 <h2>
 <a name="version" class="anchor" href="#version"><span class="octicon octicon-link"></span></a>Version</h2>
 
-<p>1.06.3</p>
+<p>1.06.4</p>
 
 <p>Read the <strong>Changelog.txt</strong> for details</p>
 
@@ -101,7 +101,7 @@
 <td align="left">equipped</td>
 <td align="left">eq</td>
 <td align="left">item type</td>
-<td align="left">item type is equipped (item type can be an inventory slot, item type, or item subtype)</td>
+<td align="left">item type is equipped (item type can be an inventory slot name or numeric slot value / item type or item subtype)</td>
 </tr>
 <tr>
 <td align="left">exists</td>
@@ -343,6 +343,122 @@
 <hr>
 
 <h2>
+<a name="inventory-slots" class="anchor" href="#inventory-slots"><span class="octicon octicon-link"></span></a>Inventory Slots</h2>
+
+<p>The current IDs for Inventory Slots are</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">name</th>
+<th align="left">numeric value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">ammoslot</td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">headslot</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">neckslot</td>
+<td align="left">2</td>
+</tr>
+<tr>
+<td align="left">shoulderslot</td>
+<td align="left">3</td>
+</tr>
+<tr>
+<td align="left">shirtslot</td>
+<td align="left">4</td>
+</tr>
+<tr>
+<td align="left">chestslot</td>
+<td align="left">5</td>
+</tr>
+<tr>
+<td align="left">waistslot</td>
+<td align="left">6</td>
+</tr>
+<tr>
+<td align="left">legsslot</td>
+<td align="left">7</td>
+</tr>
+<tr>
+<td align="left">feetslot</td>
+<td align="left">8</td>
+</tr>
+<tr>
+<td align="left">wristslot</td>
+<td align="left">9</td>
+</tr>
+<tr>
+<td align="left">handsslot</td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left">finger0slot</td>
+<td align="left">11</td>
+</tr>
+<tr>
+<td align="left">finger1slot</td>
+<td align="left">12</td>
+</tr>
+<tr>
+<td align="left">trinket0slot</td>
+<td align="left">13</td>
+</tr>
+<tr>
+<td align="left">trinket1slot</td>
+<td align="left">14</td>
+</tr>
+<tr>
+<td align="left">backslot</td>
+<td align="left">15</td>
+</tr>
+<tr>
+<td align="left">mainhandslot</td>
+<td align="left">16</td>
+</tr>
+<tr>
+<td align="left">offhandslot</td>
+<td align="left">17</td>
+</tr>
+<tr>
+<td align="left">secondaryhandslot</td>
+<td align="left">17</td>
+</tr>
+<tr>
+<td align="left">rangedslot</td>
+<td align="left">18</td>
+</tr>
+<tr>
+<td align="left">tabardslot</td>
+<td align="left">19</td>
+</tr>
+<tr>
+<td align="left">bag0slot</td>
+<td align="left">20</td>
+</tr>
+<tr>
+<td align="left">bag1slot</td>
+<td align="left">21</td>
+</tr>
+<tr>
+<td align="left">bag2slot</td>
+<td align="left">22</td>
+</tr>
+<tr>
+<td align="left">bag3slot</td>
+<td align="left">23</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
 <a name="paramater-usage" class="anchor" href="#paramater-usage"><span class="octicon octicon-link"></span></a>Paramater Usage</h2>
 
 <p>Multiple paramaters can be included by seperating them with a <em>slash</em> [<strong>/</strong>] check reference table to see which is supported</p>
@@ -520,7 +636,16 @@ Castsequence will reset every 12 seconds / combat or target changes</p>
 </code></pre>
 
 <blockquote>
-<p>To use the best conjured mana crystal found in the player inventory ordered as follows <em>ruby/citrine/jade/agate</em></p>
+<p>Following macro allows you to create a spellstone if a modifer key is down, if no modifer key is down then equip it if not already equipped then use it</p>
+</blockquote>
+
+<pre><code>/castx [mod,smartcast]create spellstone;[nomod,smartcast,noequipped:17]spellstone;17
+</code></pre>
+
+<p><strong>Mage</strong></p>
+
+<blockquote>
+<p>One single macro to rule them all, this will allow you to create or use the mana crystal if found in your inventory. To use the best conjured mana crystal found in the player inventory ordered as follows <em>ruby/citrine/jade/agate</em>, Only creating the mana crystal is class specific, otherwise it will look into your inventory</p>
 </blockquote>
 
 <pre><code>/use [smartcast]conjure mana
