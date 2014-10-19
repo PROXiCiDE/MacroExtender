@@ -41,7 +41,13 @@ function ME_IsEquippedItemType( itemType )
         if ME_Inventory[itemType] then
                 return true
         else
-                local slot = ME_InventorySlot[itemType]
+                local slot
+                if string.find(itemType,"%a+") then
+                        slot = ME_InventorySlot[itemType]
+                else
+                        slot = tonumber(itemType)
+                end
+                
                 if slot then
                         if GetInventoryItemLink("player", slot) then
                                 return true

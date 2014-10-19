@@ -9,7 +9,7 @@ MacroExtender addon for 1.12.1 World of Warcraft
 > MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more
 
 ##Version
-1.06.3
+1.06.4
 
 Read the **Changelog.txt** for details
 
@@ -30,7 +30,7 @@ condition|alias|paramater|description
 channeling|chan|spell1/spell2/../spellN|Is the player currently channeling a spell
 combat|||In combat
 dead|||Target is dead
-equipped|eq|item type|item type is equipped (item type can be an inventory slot, item type, or item subtype)
+equipped|eq|item type|item type is equipped (item type can be an inventory slot name or numeric slot value / item type or item subtype)
 exists|||Target exists
 pet||pet type|The given pet is out
 harm|||Can cast harmful spells on the target
@@ -84,6 +84,38 @@ stopcasting||Stop casting or channeling a spell
 dismount||Dismounts your character
 cancelform||Cancels your current shapeshift/shadow/ghost wolf form
 ---
+
+##Inventory Slots
+
+The current IDs for Inventory Slots are
+
+name|numeric value
+:--|:--|
+ammoslot|0
+headslot|1
+neckslot|2
+shoulderslot|3
+shirtslot|4
+chestslot|5
+waistslot|6
+legsslot|7
+feetslot|8
+wristslot|9
+handsslot|10
+finger0slot|11
+finger1slot|12
+trinket0slot|13
+trinket1slot|14
+backslot|15
+mainhandslot|16
+offhandslot|17
+secondaryhandslot|17
+rangedslot|18
+tabardslot|19
+bag0slot|20
+bag1slot|21
+bag2slot|22
+bag3slot|23
 
 ##Paramater Usage
 Multiple paramaters can be included by seperating them with a *slash* [**/**] check reference table to see which is supported
@@ -204,7 +236,15 @@ __Warlock__
 /castx [mod,smartcast]create healthstone;[smartcast]healthstone
 ```
 
->To use the best conjured mana crystal found in the player inventory ordered as follows *ruby/citrine/jade/agate*
+>Following macro allows you to create a spellstone if a modifer key is down, if no modifer key is down then equip it if not already equipped then use it
+
+```
+/castx [mod,smartcast]create spellstone;[nomod,smartcast,noequipped:17]spellstone;17
+```
+
+__Mage__
+
+>One single macro to rule them all, this will allow you to create or use the mana crystal if found in your inventory. To use the best conjured mana crystal found in the player inventory ordered as follows *ruby/citrine/jade/agate*, Only creating the mana crystal is class specific, otherwise it will look into your inventory
 
 ```
 /use [smartcast]conjure mana

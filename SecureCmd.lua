@@ -136,8 +136,10 @@ local SecureCmdOptionHandlers = {
                 if ( n > 0 ) then
                         for i=1, n do
                                 local type = string.lower(arg[i])
-                                if ME_IsEquippedItemType(type) then
-                                        return true
+                                if type then
+                                        if ME_IsEquippedItemType(type) then
+                                                return true
+                                        end
                                 end
                         end
                 end

@@ -2,6 +2,11 @@
 -- VERSION HISTORY
 ----------------------------------------------------------------------------------
 
+1.06.4 -
+		Macro condition changes
+		equipped fixed bugs and also accept numeric slot values for advanced users, check ReadMe for description
+
+		misc bug fixes
 1.06.3 -
 		IMPORTANT:
 			Smartcast last build said it had a alias, it was my mistake i had removed it and realized that it would probably cost complications
