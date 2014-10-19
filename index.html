@@ -45,7 +45,7 @@
 <h2>
 <a name="version" class="anchor" href="#version"><span class="octicon octicon-link"></span></a>Version</h2>
 
-<p>1.06.2</p>
+<p>1.06.3</p>
 
 <p>Read the <strong>Changelog.txt</strong> for details</p>
 
@@ -224,7 +224,7 @@
 </tr>
 <tr>
 <td align="left">smartcast</td>
-<td align="left">sc</td>
+<td align="left"></td>
 <td align="left"></td>
 <td align="left">Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank</td>
 </tr>
@@ -486,6 +486,44 @@ Castsequence will reset every 12 seconds / combat or target changes</p>
 /petattack [pet,mod:shift]
 
 /castx [nochanneling:drain life]Drain Life
+
+/eq [smartcast]firestone
+</code></pre>
+
+<blockquote>
+<p>To create a warlock healthstone without repeative editing of a macro each spell rank learnt, use the smartcast option. Passing the spell without any rank information such as <em>minor/lesser/../major</em> If major is learnt by the player then it will cast <em>Create Soulstone (Major)()</em> automatically for the player if the mana requirement is met, if not it will down rank until successful. This works with all <strong><em>Create [Spell's]/Conjure [Spell's]</em></strong>,</p>
+</blockquote>
+
+<pre><code>/castx [smartcast]create healthstone
+</code></pre>
+
+<blockquote>
+<p>To use the best healthstone found in the player inventory ordered as follows <em>major/greater/../lesser</em></p>
+</blockquote>
+
+<pre><code>/use [smartcast]healthstone
+</code></pre>
+
+<blockquote>
+<p>Create healthstone while a modifier key is down otherwise use the healthstone</p>
+</blockquote>
+
+<pre><code>/castx [mod,smartcast]create healthstone
+/use [nomod,smartcast]healthstone
+</code></pre>
+
+<blockquote>
+<p>Bellow is equivalent of the example above just shorter</p>
+</blockquote>
+
+<pre><code>/castx [mod,smartcast]create healthstone;[smartcast]healthstone
+</code></pre>
+
+<blockquote>
+<p>To use the best conjured mana crystal found in the player inventory ordered as follows <em>ruby/citrine/jade/agate</em></p>
+</blockquote>
+
+<pre><code>/use [smartcast]conjure mana
 </code></pre>
 
 <p><strong>Druid</strong></p>
