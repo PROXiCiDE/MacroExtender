@@ -36,6 +36,16 @@ function PXED_PrintArgs( tbl )
         ME_Print("%s",str)
 end
 
+function IsString( param )
+        return string.find(param,"%a+")
+end
+
+function IsNumber( param )
+        if string.find(param,"^%d+$") then
+                return tonumber(param)
+        end
+end
+
 function Select(a,...)
         if type(a) == "string" and a == "#" then
                 return arg.n
@@ -96,16 +106,7 @@ function splitNext(sep, body)
 end
 function commaIterator(str) return splitNext, ",", str; end
 
-function ME_GetLinkInfo( link )
-        local name
-        if not link then
-                return ""
-        end
-        for id, name in string.gfind(link, "|c%x+|Hitem:(%d+):%d+:%d+:%d+|h%[(.-)%]|h|r$") do
-                return tonumber(id), name
-        end
-        return nil
-end
+
 
 function GetItemInfoType(link)
         local id = link
@@ -385,114 +386,6 @@ function ME_CheckResultsFromTable( res, tbl )
                 end
         end
         return nil
-end
-
-function ME_CastOrUseItem(action, selfcast, smartcast)
-        local name, bag, slot = SecureCmdItemParse(action)
-        if slot or ME_GetBagItemInfo(name, smartcast) then
-                SecureCmdUseItem(name,bag,slot,selfcast, smartcast)
-        else
-                if smartcast then
-                        action = Select(1,ME_GetSpellEfficencay(action))
-                end
-                
-                if action then
-                        local spellTable = ME_GetSpellTable(action)
-                        if spellTable then
-                                if spellTable.isChanneled then
-                                        ME_Spells.ChannelSpell = action
-                                end
-                        end
-                        
-                        CastSpellByName(action,selfcast)
-                end
-        end
-end
-
-function ME_CastSpell( macro )
-        local action, target, smartcast = SecureCmdOptionParse(macro)
-        local selfcast = 0
-        
-        if target and target == "player" then
-                selfcast = 1
-        end
-        
-        if action then
-                ME_CastOrUseItem(action,selfcast,smartcast)
-        end
-end
-
-function ME_CastSequence( macro )
-        local action, target, smartcast = SecureCmdOptionParse(macro)
-        local selfcast = 0
-        if action then
-                if string.find(macro,"reset=([^%s]+)%s*%b[]") then
-                        ME_Print("/castsequence "..L["Syntax Error"])
-                        ME_Print("/castsequence [condition] reset=options spell,spell,spell")
-                        ME_Print("/castsequence [pet] reset=target corruption,curse of agony,immolate,shadow bolt,shadow bolt,shadow bolt")
-                        return
-                end
-        end
-        if target and target == "player" then
-                selfcast = 1
-        end
-        
-        if action then
-                ExecuteCastSequence(action,selfcast,smartcast)
-        end
-end
-
-function ME_PickItem( macro )
-        local action = SecureCmdOptionParse(macro)
-        
-        if action then
-                local name, bag, slot = SecureCmdItemParse(action)
-                if bag and slot then
-                        PickupContainerItem(bag,slot)
-                else
-                        ME_PickItemByName(action)
-                end
-        end
-end
-
-function ME_EquipItem( macro )
-        local function EquipFromList( smartcast, ... )
-                for i=1,table.getn(arg) do
-                        local item = arg[i]
-                        if item then
-                                local name, bag, slot = SecureCmdItemParse(item)
-                                local item = ME_GetBagItemInfo(name, smartcast) or name
-                                if slot or item then
-                                        if ME_IsEquippableByClass(item) then
-                                                SecureCmdUseItem(item,bag,slot,false, smartcast)
-                                        end
-                                end
-                        end
-                end
-        end
-        
-        local actions,target,smartcast = SecureCmdOptionParse(macro)
-        if actions then
-                EquipFromList(smartcast,strsplit(",",actions))
-        end
-end
-
-function ME_CastRandom( macro )
-        local function GetRandomArgument(...)
-                local n = table.getn(arg)
-                return arg[math.random(1,n)]
-        end
-        
-        local actions, target, smartcast = SecureCmdOptionParse(macro)
-        local selfcast = 0
-        
-        if target and target == "player" then
-                selfcast = 1
-        end
-        
-        if actions then
-                ME_CastOrUseItem(GetRandomArgument(strsplit(",",actions)),selfcast,smartcast)
-        end
 end
 
 function ME_GenericFunction( macro, fn )

@@ -95,12 +95,12 @@ function ME_GetSpellID(spell, rank)
 end
 
 function ME_GetSpellEfficencay( spell )
-        
         local spellTable = ME_GetSpellTable(spell)
         local found = false
         
         if spellTable then
-                if string.find(string.lower(spell),"life tap")  then
+                local l_spell = string.lower(spell)
+                if string.find(l_spell,"life tap")  then
                         if Select(2,UnitClass("player")) == "WARLOCK" and UnitManaPct("player") < 100 then
                                 local scale = 563
                                 local mult = 1.2
@@ -128,7 +128,7 @@ function ME_GetSpellEfficencay( spell )
                                                 if ME_SpellHasAkwardRank(rankTable.spellName) then
                                                         spell=rankTable.spellName
                                                 else
-                                                        spell=spell .. "(Rank "..i..")"
+                                                        spell=rankTable.spellName .. "(Rank "..i..")"
                                                 end
                                                 found = true
                                                 break
@@ -138,6 +138,58 @@ function ME_GetSpellEfficencay( spell )
                 end
         end
         return spell,found
+end
+
+
+function ME_CastSpell( macro )
+        local action, target, smartcast = SecureCmdOptionParse(macro)
+        local selfcast = 0
+        
+        if target and target == "player" then
+                selfcast = 1
+        end
+        
+        if action then
+                ME_CastOrUseItem(action,selfcast,smartcast)
+        end
+end
+
+function ME_CastSequence( macro )
+        local action, target, smartcast = SecureCmdOptionParse(macro)
+        local selfcast = 0
+        if action then
+                if string.find(macro,"reset=([^%s]+)%s*%b[]") then
+                        ME_Print("/castsequence "..L["Syntax Error"])
+                        ME_Print("/castsequence [condition] reset=options spell,spell,spell")
+                        ME_Print("/castsequence [pet] reset=target corruption,curse of agony,immolate,shadow bolt,shadow bolt,shadow bolt")
+                        return
+                end
+        end
+        if target and target == "player" then
+                selfcast = 1
+        end
+        
+        if action then
+                ExecuteCastSequence(action,selfcast,smartcast)
+        end
+end
+
+function ME_CastRandom( macro )
+        local function GetRandomArgument(...)
+                local n = table.getn(arg)
+                return arg[math.random(1,n)]
+        end
+        
+        local actions, target, smartcast = SecureCmdOptionParse(macro)
+        local selfcast = 0
+        
+        if target and target == "player" then
+                selfcast = 1
+        end
+        
+        if actions then
+                ME_CastOrUseItem(GetRandomArgument(strsplit(",",actions)),selfcast,smartcast)
+        end
 end
 
 function ME_UpdateSpellBook( ... )
@@ -218,9 +270,16 @@ function ME_UpdateSpellBook( ... )
                                 end
                         end
                         
+                        
+                        
                         if ak_found then
                                 l_spell,l_rank = ME_SpellSplitRank(l_spell,true)
                                 spellName = akwardSpell
+                                
+                                --make a creation spell for conjured items
+                                if string.find(l_spell,"conjure %a+") then
+                                        l_spell = "create "..l_spell
+                                end
                                 
                                 if not manaTable[l_spell] then
                                         manaTable[l_spell] = {  
@@ -245,6 +304,11 @@ function ME_UpdateSpellBook( ... )
                                         }
                                 end
                         else
+                                --make a creation spell for conjured items
+                                if string.find(l_spell,"conjure %a+") then
+                                        l_spell = "create "..l_spell
+                                end
+                                
                                 if not ME_Spells[l_spell] then
                                         ME_Spells[l_spell] = {  
                                                 akwardSpell = ak_found,

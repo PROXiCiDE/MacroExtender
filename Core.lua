@@ -2,6 +2,7 @@ local L = ME_GetLocale()
 
 --TODO: Implement help / settings to control Macro Extender
 --Currently being used for debugging
+--Do not use these
 local function ProxMacro_Handler(msg,editbox)
         if  msg or msg ~= "" then
                 local args = {};
@@ -11,22 +12,27 @@ local function ProxMacro_Handler(msg,editbox)
                         table.insert(args, word);
                 end
                 
-                if args[1] then
-                        local cmd = string.lower(args[1])
-                        if cmd == "buff" then
-                                local i = 0
-                                while GetPlayerBuff(i) >= 0 do
-                                        local id,cancel = GetPlayerBuff(i,"HELPFUL|HARMFUL|PASSIVE")
-                                        if(id > -1) then
-                                                ME_Print("%d,%s",id,GetPlayerBuffTexture(id))
-                                        end
-                                        i = i + 1
+                local cmd = string.lower(args[1] or "")
+                if cmd == "create" then
+                        local cmd2 = string.lower(args[2] or "")
+                        local name = args[3]
+                        if cmd2 == "equiplist" and name then
+                                ME_EquipSaveMacro(name,true)
+                        end
+                end
+                
+                if cmd == "buff" then
+                        local i = 0
+                        while GetPlayerBuff(i) >= 0 do
+                                local id,cancel = GetPlayerBuff(i,"HELPFUL|HARMFUL|PASSIVE")
+                                if(id > -1) then
+                                        ME_Print("%d,%s",id,GetPlayerBuffTexture(id))
                                 end
+                                i = i + 1
                         end
                 end
         end
-end
-
+end        
 
 SLASH_PXMACRO1 = "/pxmacro"
 SlashCmdList["PXMACRO"] = ProxMacro_Handler

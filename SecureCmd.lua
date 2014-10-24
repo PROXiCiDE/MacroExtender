@@ -256,6 +256,25 @@ local SecureCmdOptionHandlers = {
                 end
         end,
         
+        
+        pbuff = function(target, desired)
+                if desired ~= nil and desired ~= "" and string.find(desired,"([%w%_]+)") then
+                        if (UnitExists("player") and HasBuff(desired)) then
+                                return true
+                        end
+                end
+                return false    
+        end,
+        
+        pdebuff = function(target, desired)
+                if desired ~= nil and desired ~= "" and string.find(desired,"([%w%_]+)") then
+                        if (UnitExists("player") and HasDebuff(desired)) then
+                                return true
+                        end
+                end
+                return false    
+        end,
+        
         buff = function(target, desired)
                 if desired ~= nil and desired ~= "" and string.find(desired,"([@%w%_]+)") then
                         if string.find(desired,"@") then
@@ -523,7 +542,7 @@ local function CreateCastSquenceActions( smartcast, tbl, ... )
                 local action = strtrim(arg[i])
                 if action and action ~= "" then
                         index = index + 1
-                        if (ME_GetBagItemInfo(action,smartcast) or Select(3,SecureCmdItemParse(action))) then
+                        if (ME_GetItemInfo(action,smartcast) or Select(3,SecureCmdItemParse(action))) then
                                 tbl.items[index] = action
                                 tbl.spells[index] = action
                         else
@@ -637,7 +656,7 @@ function ExecuteCastSequence( sequence, target, smartcast )
                 local name,bag,slot = SecureCmdItemParse(item)
                 if slot then
                         if name then
-                                spell = ME_GetBagItemInfo(name,smartcast) or ""
+                                spell = ME_GetItemInfo(name,smartcast) or ""
                         else
                                 spell = ""
                         end

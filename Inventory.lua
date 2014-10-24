@@ -42,8 +42,11 @@ function ME_IsEquippedItemType( itemType )
                 return true
         else
                 local slot
-                if string.find(itemType,"%a+") then
+                if IsString(itemType) then
                         slot = ME_InventorySlot[itemType]
+                        if not slot then
+                                return ME_HasInventory(itemType) ~= nil
+                        end
                 else
                         slot = tonumber(itemType)
                 end
@@ -65,7 +68,7 @@ function ME_IsEquippableByClass( name )
                 end
         end
         
-        local found, item = ME_IsItemInBags(name)
+        local found, item = ME_HasItem(name)
         if found and item then
                 if item.link then
                         ME_InvTooltip:SetOwner(UIParent,"ANCHOR_NONE")        
@@ -83,7 +86,7 @@ function ME_IsEquippableByClass( name )
 end
 
 function ME_IsEquippableItem( name )
-        local found, item = ME_IsItemInBags(name)
+        local found, item = ME_HasItem(name)
         if found and item then
                 
                 if not ME_IsEquippableByClass(name) then
@@ -99,6 +102,58 @@ function ME_IsEquippableItem( name )
                 return false
         end
         return true
+end
+
+function ME_GetInventoryItemInfo( slot )
+        local itemLink = GetInventoryItemLink("player", slot)
+        if itemLink then
+                local i_id,i_name = ME_GetLinkInfo(itemLink)
+                return i_id,i_name,itemLink
+        end
+        return nil
+end
+
+--Returns SlotID,ItemID,ItemName or nil not found
+function ME_HasInventory( name )
+        name = string.lower(name or "")
+        if name then
+                for i=1,19 do
+                        local i_id,i_name = ME_GetInventoryItemInfo(i)
+                        if i_id then
+                                i_name = string.lower(i_name)
+                                if string.find(i_name,name) then
+                                        return i
+                                end
+                        end
+                end
+        end
+        return nil
+end
+
+
+--PaperDollFrame
+function ME_EquipSaveMacro( name, deleteDup )
+        deleteDup = deleteDup or false
+        local equipList = {}
+        local texture
+        for i=1,19 do
+                local itemLink = GetInventoryItemLink("player", i)
+                if itemLink then
+                        local id,name = ME_GetLinkInfo(itemLink)
+                        texture = Select(10,GetItemInfo(id))
+                        if id>0 and name then
+                                table.insert(equipList,name)
+                        end
+                end
+        end
+        
+        local found = GetMacroIndexByName(name)
+        if found > 0 and deleteDup ~= false then
+                DeleteMacro(found)
+        end
+        
+        local eqString = "/equip " .. table.concat(equipList,",")
+        CreateMacro(name,texture,eqString,nil,nil)
 end
 
 function ME_InventoryUpdate( ... )

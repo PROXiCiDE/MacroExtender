@@ -2,6 +2,17 @@
 -- VERSION HISTORY
 ----------------------------------------------------------------------------------
 
+1.06.5 -
+		Macro condition changes
+		pbuff / pdebuff - Checks the player only, its equivalent of buff:@TextureFile
+		
+		equipped now accept item name search Example: /eq [noequipped:spellstone]spellstone
+		smartcast has been improved, can now use bandages / health potions / mana potions /
+			 food / water / conjure food / conjure water / healthstones (now accepts talent improved comparison) /
+			 firestone / soulstone / spellstone
+			 
+		Check ReadMe for aditional information
+		ReadMe.html was removed
 1.06.4 -
 		Macro condition changes
 		equipped fixed bugs and also accept numeric slot values for advanced users, check ReadMe for description

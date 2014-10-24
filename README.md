@@ -9,7 +9,7 @@ MacroExtender addon for 1.12.1 World of Warcraft
 > MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more
 
 ##Version
-1.06.4
+1.06.5
 
 Read the **Changelog.txt** for details
 
@@ -56,6 +56,8 @@ pethappy|peth||Hunter's pet is happy
 smartcast|||Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank
 buff||texture|Contains buff texture
 debuff||texture|Contains debuff texture
+pbuff||texture|Same as buff, checks the player character only
+pdebuff||texture|Same as debuff, checks the player character only
 ---
 
 >Relational operators for mana / health condition for comparison
@@ -132,6 +134,39 @@ To prevent the above example from continuing with the next sequence in the list 
 /castsequence [mod,nochanneling:drain soul]drain soul;[nochan]reset=target/combat corruption,curse of agony,shadow bolt,shadow bolt,shadow bolt,shadow bolt
 ```
 
+***smartcast***
+>Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank
+*/pick, /use, /equip, /castx, /castrandom, /castsequence*
+
+*Creation is class specific only*
+
+name|useable by|create|description
+:--|:--|:--|:--|
+conjure water|all|create conjure water|Mage conjured water
+conjure food|all|create conjure food|Mage conjured food
+conjure mana|all|create conjure mana|Mage mana crystals such as *Mana Agate*/etc...
+food|all|none|All non conjured items
+bandage|all|none|Bandages
+healthpotion|all|none|Healing potions
+manapotion|all|none|Mana potions
+healthstone|all|create healthstone|Warlock healthstone
+firestone|Warlock|create firestone|Warlock firestone
+spellstone|Warlock|create spellstone|Warlock spellstone
+soulstone|Warlock|create soulstone|Warlock soulstone
+
+####Usage
+>If the players health is Lesser or Equal to 75% then *smartcast* will look up the player inventory and search for a *healthstone* of all ranks starting with the highest rank first.
+
+```
+/use [smartcast,target=player,health:<=75]healthstone
+```
+
+>Creating a *healthstone* if the player is a *warlock*
+
+```
+/castx [smartcast]create healthstone
+```
+
 ***Buff / Debuff***
 >Adding a prefix "**@**"  in the front of the *Buff/Debuff* will check the player instead of the target. This allows you too still direct harmful spells at the target
 
@@ -150,7 +185,13 @@ This will not succeed as it will target the player to cast **shadow bolt**
 /castx [target=player,buff:Shadow_Twilight]shadow bolt
 ```
 
+***PBuff / PDebuff***
+>This does not require the prefix "**@**" as this checks the player only.This was implemented so it didnt seem confusing for users
 
+Will cast shadow bolt only if the warlock has gained Nightfall proc, otherwise cast immolate
+```
+/castx [pbuff:Shadow_Twilight]shadow bolt;Imolate
+```
 ___Pet commands___
 
 command|description
@@ -171,24 +212,24 @@ command|description
 reload|Reloads the user interface
 ---
 #Examples
-__Warrior__
+##Warrior
 ```
 /castx [stance:1]Heroic Strike;Rend
 /castx [equipped:shields]defensive stance
 ```
 
-__Hunter__
+##Hunter
 ```
 /castx [pet,nopethappy]feed pet
 /pick [pet:boar,nopethappy]roasted quail
 ```
 
-__Rogue__
+##Rogue
 ```
 /castx [stealth]Rupture;Sinister Strike
 ```
 
-__Warlock__
+##Warlock
 ```
 /castx [smartcast]Shadow Bolt
 /castx [mod:ctrl]Immolate;Curse of Agony
@@ -242,20 +283,34 @@ __Warlock__
 /castx [mod,smartcast]create spellstone;[nomod,smartcast,noequipped:17]spellstone;17
 ```
 
-__Mage__
+##Mage
 
->One single macro to rule them all, this will allow you to create or use the mana crystal if found in your inventory. To use the best conjured mana crystal found in the player inventory ordered as follows *ruby/citrine/jade/agate*, Only creating the mana crystal is class specific, otherwise it will look into your inventory
+>With 1.06.5 Changes, creating conjured items has changed. This allows the mage to create multiple stacks of water, before it would only create 1 stack then use the stack until it was gone, then repeat by recreating a new stack
 
+######Creating Conjured Water
+```
+/castx [smartcast]create conjure water
+```
+######Using Conjured Water
+```
+/use [smartcast]conjure water
+```
+
+######Creating Mana Crystal
+```
+/castx [smartcast]create conjure mana
+```
+######Using Mana Crystal
 ```
 /use [smartcast]conjure mana
 ```
 
-__Druid__
+##Druid
 ```
 /castx [nostance:3]cat form;[stance:3,nostealth]prowl;pounce
 ```
 
-__Misc__
+##Misc
 ```
 /dismount [combat,mounted]
 /castrandom [nocombat]corruption,immolate,curse of agony;shadow bolt
