@@ -45,7 +45,7 @@
 <h2>
 <a name="version" class="anchor" href="#version"><span class="octicon octicon-link"></span></a>Version</h2>
 
-<p>1.06.4</p>
+<p>1.06.5</p>
 
 <p>Read the <strong>Changelog.txt</strong> for details</p>
 
@@ -239,6 +239,18 @@
 <td align="left"></td>
 <td align="left">texture</td>
 <td align="left">Contains debuff texture</td>
+</tr>
+<tr>
+<td align="left">pbuff</td>
+<td align="left"></td>
+<td align="left">texture</td>
+<td align="left">Same as buff, checks the player character only</td>
+</tr>
+<tr>
+<td align="left">pdebuff</td>
+<td align="left"></td>
+<td align="left">texture</td>
+<td align="left">Same as debuff, checks the player character only</td>
 </tr>
 </tbody>
 </table>
@@ -475,6 +487,111 @@
 <pre><code>/castsequence [mod,nochanneling:drain soul]drain soul;[nochan]reset=target/combat corruption,curse of agony,shadow bolt,shadow bolt,shadow bolt,shadow bolt
 </code></pre>
 
+<p><strong><em>smartcast</em></strong></p>
+
+<blockquote>
+<p>Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank
+<em>/pick, /use, /equip, /castx, /castrandom, /castsequence</em></p>
+</blockquote>
+
+<p><em>Creation is class specific only</em></p>
+
+<table>
+<thead>
+<tr>
+<th align="left">name</th>
+<th align="left">useable by</th>
+<th align="left">create</th>
+<th align="left">description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">conjure water</td>
+<td align="left">all</td>
+<td align="left">create conjure water</td>
+<td align="left">Mage conjured water</td>
+</tr>
+<tr>
+<td align="left">conjure food</td>
+<td align="left">all</td>
+<td align="left">create conjure food</td>
+<td align="left">Mage conjured food</td>
+</tr>
+<tr>
+<td align="left">conjure mana</td>
+<td align="left">all</td>
+<td align="left">create conjure mana</td>
+<td align="left">Mage mana crystals such as <em>Mana Agate</em>/etc...</td>
+</tr>
+<tr>
+<td align="left">food</td>
+<td align="left">all</td>
+<td align="left">none</td>
+<td align="left">All non conjured items</td>
+</tr>
+<tr>
+<td align="left">bandage</td>
+<td align="left">all</td>
+<td align="left">none</td>
+<td align="left">Bandages</td>
+</tr>
+<tr>
+<td align="left">healthpotion</td>
+<td align="left">all</td>
+<td align="left">none</td>
+<td align="left">Healing potions</td>
+</tr>
+<tr>
+<td align="left">manapotion</td>
+<td align="left">all</td>
+<td align="left">none</td>
+<td align="left">Mana potions</td>
+</tr>
+<tr>
+<td align="left">healthstone</td>
+<td align="left">all</td>
+<td align="left">create healthstone</td>
+<td align="left">Warlock healthstone</td>
+</tr>
+<tr>
+<td align="left">firestone</td>
+<td align="left">Warlock</td>
+<td align="left">create firestone</td>
+<td align="left">Warlock firestone</td>
+</tr>
+<tr>
+<td align="left">spellstone</td>
+<td align="left">Warlock</td>
+<td align="left">create spellstone</td>
+<td align="left">Warlock spellstone</td>
+</tr>
+<tr>
+<td align="left">soulstone</td>
+<td align="left">Warlock</td>
+<td align="left">create soulstone</td>
+<td align="left">Warlock soulstone</td>
+</tr>
+</tbody>
+</table>
+
+<h4>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h4>
+
+<blockquote>
+<p>If the players health is Lesser or Equal to 75% then <em>smartcast</em> will look up the player inventory and search for a <em>healthstone</em> of all ranks starting with the highest rank first.</p>
+</blockquote>
+
+<pre><code>/use [smartcast,target=player,health:&lt;=75]healthstone
+</code></pre>
+
+<blockquote>
+<p>Creating a <em>healthstone</em> if the player is a <em>warlock</em></p>
+</blockquote>
+
+<pre><code>/castx [smartcast]create healthstone
+</code></pre>
+
 <p><strong><em>Buff / Debuff</em></strong></p>
 
 <blockquote>
@@ -497,6 +614,17 @@ Castsequence will reset every 12 seconds / combat or target changes</p>
 <p>This will not succeed as it will target the player to cast <strong>shadow bolt</strong></p>
 
 <pre><code>/castx [target=player,buff:Shadow_Twilight]shadow bolt
+</code></pre>
+
+<p><strong><em>PBuff / PDebuff</em></strong></p>
+
+<blockquote>
+<p>This does not require the prefix "<strong>@</strong>" as this checks the player only.This was implemented so it didnt seem confusing for users</p>
+</blockquote>
+
+<p>Will cast shadow bolt only if the warlock has gained Nightfall proc, otherwise cast immolate</p>
+
+<pre><code>/castx [pbuff:Shadow_Twilight]shadow bolt;Imolate
 </code></pre>
 
 <p><strong><em>Pet commands</em></strong></p>
@@ -566,24 +694,28 @@ Castsequence will reset every 12 seconds / combat or target changes</p>
 <h1>
 <a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h1>
 
-<p><strong>Warrior</strong></p>
+<h2>
+<a name="warrior" class="anchor" href="#warrior"><span class="octicon octicon-link"></span></a>Warrior</h2>
 
 <pre><code>/castx [stance:1]Heroic Strike;Rend
 /castx [equipped:shields]defensive stance
 </code></pre>
 
-<p><strong>Hunter</strong></p>
+<h2>
+<a name="hunter" class="anchor" href="#hunter"><span class="octicon octicon-link"></span></a>Hunter</h2>
 
 <pre><code>/castx [pet,nopethappy]feed pet
 /pick [pet:boar,nopethappy]roasted quail
 </code></pre>
 
-<p><strong>Rogue</strong></p>
+<h2>
+<a name="rogue" class="anchor" href="#rogue"><span class="octicon octicon-link"></span></a>Rogue</h2>
 
 <pre><code>/castx [stealth]Rupture;Sinister Strike
 </code></pre>
 
-<p><strong>Warlock</strong></p>
+<h2>
+<a name="warlock" class="anchor" href="#warlock"><span class="octicon octicon-link"></span></a>Warlock</h2>
 
 <pre><code>/castx [smartcast]Shadow Bolt
 /castx [mod:ctrl]Immolate;Curse of Agony
@@ -642,21 +774,45 @@ Castsequence will reset every 12 seconds / combat or target changes</p>
 <pre><code>/castx [mod,smartcast]create spellstone;[nomod,smartcast,noequipped:17]spellstone;17
 </code></pre>
 
-<p><strong>Mage</strong></p>
+<h2>
+<a name="mage" class="anchor" href="#mage"><span class="octicon octicon-link"></span></a>Mage</h2>
 
 <blockquote>
-<p>One single macro to rule them all, this will allow you to create or use the mana crystal if found in your inventory. To use the best conjured mana crystal found in the player inventory ordered as follows <em>ruby/citrine/jade/agate</em>, Only creating the mana crystal is class specific, otherwise it will look into your inventory</p>
+<p>With 1.06.5 Changes, creating conjured items has changed. This allows the mage to create multiple stacks of water, before it would only create 1 stack then use the stack until it was gone, then repeat by recreating a new stack</p>
 </blockquote>
+
+<h6>
+<a name="creating-conjured-water" class="anchor" href="#creating-conjured-water"><span class="octicon octicon-link"></span></a>Creating Conjured Water</h6>
+
+<pre><code>/castx [smartcast]create conjure water
+</code></pre>
+
+<h6>
+<a name="using-conjured-water" class="anchor" href="#using-conjured-water"><span class="octicon octicon-link"></span></a>Using Conjured Water</h6>
+
+<pre><code>/use [smartcast]conjure water
+</code></pre>
+
+<h6>
+<a name="creating-mana-crystal" class="anchor" href="#creating-mana-crystal"><span class="octicon octicon-link"></span></a>Creating Mana Crystal</h6>
+
+<pre><code>/castx [smartcast]create conjure mana
+</code></pre>
+
+<h6>
+<a name="using-mana-crystal" class="anchor" href="#using-mana-crystal"><span class="octicon octicon-link"></span></a>Using Mana Crystal</h6>
 
 <pre><code>/use [smartcast]conjure mana
 </code></pre>
 
-<p><strong>Druid</strong></p>
+<h2>
+<a name="druid" class="anchor" href="#druid"><span class="octicon octicon-link"></span></a>Druid</h2>
 
 <pre><code>/castx [nostance:3]cat form;[stance:3,nostealth]prowl;pounce
 </code></pre>
 
-<p><strong>Misc</strong></p>
+<h2>
+<a name="misc" class="anchor" href="#misc"><span class="octicon octicon-link"></span></a>Misc</h2>
 
 <pre><code>/dismount [combat,mounted]
 /castrandom [nocombat]corruption,immolate,curse of agony;shadow bolt
