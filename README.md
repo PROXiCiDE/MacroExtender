@@ -9,7 +9,7 @@ MacroExtender addon for 1.12.1 World of Warcraft
 > MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more
 
 ##Version
-1.06.6
+1.06.7
 
 Read the **Changelog.txt** for details
 

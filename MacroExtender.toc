@@ -3,7 +3,7 @@
 ## Author: PROXiCiDE
 ## Notes: Extend Macro Capabilities for Vanilla WOW
 ## SavedVariables: MacroExtender_Options
-## Version: 1.06.6
+## Version: 1.06.7
 Localization.lua
 
 Lib\Util.lua

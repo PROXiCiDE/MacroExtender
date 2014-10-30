@@ -102,10 +102,8 @@ function ME_UpdateMounts( ... )
                                         end
                                 end
                         end
-                        
-                        
-                        
-                        if string.find(texture,"Ability_Mount") and skillLevel > 0 then
+
+                        if string.find(texture,"Ability_Mount") then
                                 ME_Mounts.count = ME_Mounts.count + 1
                                 table.insert(ME_Mounts, { 
                                                 link = itemLink, 

@@ -2,6 +2,9 @@
 -- VERSION HISTORY
 ----------------------------------------------------------------------------------
 
+1.06.7 -
+		Mount: Bug should be fixed
+
 1.06.6 -
 		Macro condition changes
 		iscaster added
