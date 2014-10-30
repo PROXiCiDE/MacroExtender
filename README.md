@@ -53,11 +53,13 @@ macroui|on/off|Enable or Disable the MacroUI interface enhancements
  * **Shift + Left Click** on a item in your bags
  * Item should now be added to your macro
 
+
 Key Combinations|UI Frame|If Empty|Non Empty
-:--|:--|:--|:-
+:--|:--|:--|:-|
 Shift + Left Click|Character Frame|/use SlotID|SlotID
 Shift + Control + Left Click|Character Frame|/equip [condition]ItemName|/equip [condition]ItemName
 Shift + Left Click|Bag Frame|/use ItemName|ItemName
+
 
 #Conditional Statements
 These can also be checked for falseness instead of trueness by prefixing them with **"no"**. For example, **[nocombat]** is a valid conditional and will only perform the actions following it if you are not in combat.
