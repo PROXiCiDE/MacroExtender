@@ -3,6 +3,7 @@ ME_EventLog = {}
 CreateFrame("Frame","ME_Frame")
 ME_Frame:RegisterEvent("")
 ME_Frame:RegisterEvent("ADDON_LOADED")
+ME_Frame:RegisterEvent("VARIABLES_LOADED")
 
 ME_Frame:RegisterEvent("PLAYER_LOGIN")
 ME_Frame:RegisterEvent("PLAYER_DEAD")
@@ -32,7 +33,12 @@ ME_Frame:RegisterEvent("UNIT_INVENTORY_CHANGED")
 local function ME_FrameOnEvent( ... )
         -- body
         
+        if event == "VARIABLES_LOADED" then
+                InitAddon()
+        end
+        
         if event == "ADDON_LOADED" then
+                MacroHook()
         end
         
         if event == "PLAYER_LOGIN" or event == "PLAYER_ENTERING_WORLD" then
@@ -58,6 +64,7 @@ local function ME_FrameOnEvent( ... )
         
         if event == "BAG_UPDATE" then
                 ME_UpdateBags()
+                ME_UpdateMounts()
         end
         
         if event == "PLAYER_DEAD" then

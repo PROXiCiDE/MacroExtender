@@ -36,6 +36,13 @@ local ME_InventoryEquippable = {
         weapon=true,
 }
 
+function ME_IsRedText(text)
+        if text and text:GetText() then
+                local r,g,b = text:GetTextColor()
+                return math.floor(r*256) == 255 and math.floor(g*256) == 32 and math.floor(b*256) == 32
+        end
+end
+
 function ME_IsEquippedItemType( itemType )
         itemType = string.lower(itemType)
         if ME_Inventory[itemType] then
@@ -60,21 +67,17 @@ function ME_IsEquippedItemType( itemType )
         return false
 end
 
-function ME_IsEquippableByClass( name )
-        local function IsTextRed(text)
-                if text and text:GetText() then
-                        local r,g,b = text:GetTextColor()
-                        return math.floor(r*256) == 255 and math.floor(g*256) == 32 and math.floor(b*256) == 32
-                end
-        end
-        
+function ME_IsEquippableByClass( name )    
         local found, item = ME_HasItem(name)
         if found and item then
                 if item.link then
-                        ME_InvTooltip:SetOwner(UIParent,"ANCHOR_NONE")        
+                        ME_InvTooltip:SetOwner(UIParent,"ANCHOR_NONE")
+
+                        ME_InvTooltip:ClearLines()
                         ME_InvTooltip:SetHyperlink('item:'..item.id)
+                        
                         for i=1,ME_InvTooltip:NumLines() do
-                                if IsTextRed(getglobal("ME_InvTooltipTextLeft"..i)) or IsTextRed(getglobal("ME_InvTooltipTextRight"..i)) then
+                                if ME_IsRedText(getglobal("ME_InvTooltipTextLeft"..i)) or ME_IsRedText(getglobal("ME_InvTooltipTextRight"..i)) then
                                         return false
                                 end
                         end
@@ -117,7 +120,7 @@ end
 function ME_HasInventory( name )
         name = string.lower(name or "")
         if name then
-                for i=1,19 do
+                for i=0,19 do
                         local i_id,i_name = ME_GetInventoryItemInfo(i)
                         if i_id then
                                 i_name = string.lower(i_name)
@@ -136,7 +139,7 @@ function ME_EquipSaveMacro( name, deleteDup )
         deleteDup = deleteDup or false
         local equipList = {}
         local texture
-        for i=1,19 do
+        for i=0,19 do
                 local itemLink = GetInventoryItemLink("player", i)
                 if itemLink then
                         local id,name = ME_GetLinkInfo(itemLink)
@@ -157,12 +160,9 @@ function ME_EquipSaveMacro( name, deleteDup )
 end
 
 function ME_InventoryUpdate( ... )
-        WipeTable(ME_Inventory)
-        if not ME_Inventory then
-                ME_Inventory = {}
-        end
+        ME_Inventory = WipeTable(ME_Inventory)
         
-        for i=1,19 do
+        for i=0,19 do
                 local itemLink = GetInventoryItemLink("player", i)
                 if itemLink then
                         local id,name = ME_GetLinkInfo(itemLink)

@@ -2,6 +2,27 @@
 -- VERSION HISTORY
 ----------------------------------------------------------------------------------
 
+1.06.6 -
+		Macro condition changes
+		iscaster added
+		ismelee added
+		pmana, phealth added for player ownly
+
+		Macro UI changes
+		You can now link items by holding down Shift Key and Left Clicking the item from your bags or character inventory
+		
+		/mex added for configuration
+
+		/hearth added
+		/mount added
+		/click added
+		
+		/cast has been replaced, same as /castx just has TBC+ feel, If you want to use the old casting macro command then use /oldcast.
+		/castx still remains for compatability issues
+
+		Directory structure has changed for the AddOn
+
+		Check ReadMe for additional information
 1.06.5 -
 		Macro condition changes
 		pbuff / pdebuff - Checks the player only, its equivalent of buff:@TextureFile

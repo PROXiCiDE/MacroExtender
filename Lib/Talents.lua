@@ -10,11 +10,7 @@ end
 
 function ME_UpdateTalentPoints( ... )
         if UnitLevel("player") < 10 then return end
-        WipeTable(ME_Talents)
-        
-        if not ME_Talents then
-                ME_Talents = {}
-        end
+        ME_Talents = WipeTable(ME_Talents)
         
         for t=1, GetNumTalentTabs() do
                 for i=1, GetNumTalents(t) do

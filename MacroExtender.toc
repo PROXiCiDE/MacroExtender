@@ -2,17 +2,18 @@
 ## Title: |cFF7CFC00M|r|cffC495DDacro|r |cFF7CFC00E|r|cffC495DDxtender|r
 ## Author: PROXiCiDE
 ## Notes: Extend Macro Capabilities for Vanilla WOW
-## SavedVariables: 
-## Version: 1.06.5
+## SavedVariables: MacroExtender_Options
+## Version: 1.06.6
 Localization.lua
 
-Spells.lua
-Talents.lua
-Bags.lua
-Inventory.lua
-
-SecureCmd.lua
-Helper.lua
+Lib\Util.lua
+Lib\Spells.lua
+Lib\Talents.lua
+Lib\Bags.lua
+Lib\Mounts.lua
+Lib\Inventory.lua
+Lib\SecureCmd.lua
+Lib\Macros.lua
 
 Event.lua
 Core.lua

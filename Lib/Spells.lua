@@ -154,6 +154,19 @@ function ME_CastSpell( macro )
         end
 end
 
+function ME_Click( macro )
+        local action, target, smartcast = SecureCmdOptionParse(macro)
+        local selfcast = 0
+        
+        if target and target == "player" then
+                selfcast = 1
+        end
+        
+        if action then
+                ME_ClickButton(action,selfcast,smartcast)
+        end
+end
+
 function ME_CastSequence( macro )
         local action, target, smartcast = SecureCmdOptionParse(macro)
         local selfcast = 0
@@ -193,149 +206,111 @@ function ME_CastRandom( macro )
 end
 
 function ME_UpdateSpellBook( ... )
-        WipeTable(ME_Spells)
-        if not ME_Spells then
-                ME_Spells = {}
-        end
+        ME_Spells = WipeTable(ME_Spells)
         
         local manaTable = {}        
-        ME_SpellTooltip:SetOwner(UIParent,"ANCHOR_NONE")
         
-        for i = 1, GetNumSpellTabs() do
-                local name, texture, offset, numSpells = GetSpellTabInfo(i)
-                local spellCost = 0
+        local function filterFN(spellTabName,spellIndex,spellName,rankName,spellCost,spellTexture,spellType,isChanneled)
+                spellTexture = Select(3,string.find(spellTexture,"([%w%_]+)$"))
                 
-                if not name then  
-                        break
-                end   
+                rank = tonumber(Select(3,string.find(rankName, "(%d+)$")))                 
+                local l_spell = string.lower(spellName)
                 
-                for s = offset + 1, offset + numSpells do
-                        local spellName, rankName = GetSpellName(s, BOOKTYPE_SPELL)
-                        local spellTexture = GetSpellTexture(s, BOOKTYPE_SPELL)
-                        spellTexture = Select(3,string.find(spellTexture,"([%w%_]+)$"))
-                        
-                        ME_SpellTooltip:ClearLines()
-                        ME_SpellTooltip:SetSpell(s,BOOKTYPE_SPELL)
-                        
-                        local tooltipText3 = ME_SpellTooltipTextLeft3:GetText()
-                        local isChanneled = (ME_SpellTooltip:NumLines()>=3 and ME_SpellTooltipTextLeft3:IsShown() and ME_SpellTooltipTextLeft3:GetText() == "Channeled") 
-                        
-                        
-                        local tt_found,_,powerCost,powerType
-                        if ME_SpellTooltipTextLeft2:IsShown() then
-                                tt_found,_,powerCost,powerType = string.find(ME_SpellTooltipTextLeft2:GetText(),"(%d+)(.*)")
-                                if tt_found then
-                                        spellCost = tonumber(powerCost)
-                                        if powerType ~= nil or powerType ~= "" then
-                                                powerType = strtrim(powerType)
-                                        end
-                                end
-                        end
-                        
-                        --
-                        --Reserved for reading the spell reagents
-                        --
-                        -- if ME_SpellTooltipTextLeft4:IsShown() then
-                        -- end
-                        
-                        rank = tonumber(Select(3,string.find(rankName, "(%d+)$")))                 
-                        local l_spell = string.lower(spellName)
-                        
-                        if not rank then
-                                rank = 1
-                                rankName = "Rank 1"
-                        end
-                        
-                        
-                        --
-                        -- Akward Ranks, check for them
-                        --
-                        local ak_found, _, akwardSpell = ME_SpellHasAkwardRank(l_spell)
-                        local spellManaIndex = spellCost
-                        if ak_found == false then
-                                ak_found = (
-                                        (string.find(l_spell,"create%s+") and (Select(2,UnitClass("player")) == "WARLOCK")) or
-                                        (string.find(l_spell,"conjure mana%s+") and (Select(2,UnitClass("player")) == "MAGE"))
-                                )
-                        end
-                        
-                        
-                        -- Soulstone was a pain, only way to diff from rank is to get the health restored
-                        if ak_found and string.find(l_spell,"soulstone") then
-                                if ME_SpellTooltipTextLeft5:IsShown() then
-                                        local h_found,_,h_restore = string.find(ME_SpellTooltipTextLeft5:GetText(),"(%d+)")
-                                        if h_found then
-                                                spellManaIndex = tonumber(h_restore)
-                                        end
-                                end
-                        end
-                        
-                        
-                        
-                        if ak_found then
-                                l_spell,l_rank = ME_SpellSplitRank(l_spell,true)
-                                spellName = akwardSpell
-                                
-                                --make a creation spell for conjured items
-                                if string.find(l_spell,"conjure %a+") then
-                                        l_spell = "create "..l_spell
-                                end
-                                
-                                if not manaTable[l_spell] then
-                                        manaTable[l_spell] = {  
-                                                akwardSpell = ak_found,
-                                                powerType = powerType, 
-                                                maxRanks = 1, 
-                                                isChanneled = isChanneled,
-                                                powerCost = {}
-                                        }
-                                else
-                                        manaTable[l_spell].maxRanks = manaTable[l_spell].maxRanks + 1
-                                end
-                                
-                                if not manaTable[l_spell]["powerCost"][spellManaIndex] then
-                                        manaTable[l_spell]["powerCost"][spellManaIndex] = {
-                                                id = tonumber(s),
-                                                spellName = spellName,
-                                                spellCost = spellCost,
-                                                rankName = rankName,
-                                                rank = 0, 
-                                                spellTexture = spellTexture,
-                                        }
-                                end
-                        else
-                                --make a creation spell for conjured items
-                                if string.find(l_spell,"conjure %a+") then
-                                        l_spell = "create "..l_spell
-                                end
-                                
-                                if not ME_Spells[l_spell] then
-                                        ME_Spells[l_spell] = {  
-                                                akwardSpell = ak_found,
-                                                powerType = powerType, 
-                                                maxRanks = rank, 
-                                                isChanneled = isChanneled
-                                        }
-                                else
-                                        local oldMaxRank = ME_Spells[l_spell].maxRanks
-                                        if (not oldMaxRank or (rank > oldMaxRank)) then
-                                                ME_Spells[l_spell].maxRanks = rank
-                                        end
-                                end
-                                
-                                if not ME_Spells[l_spell][rankName] then
-                                        ME_Spells[l_spell][rankName] = {
-                                                id = tonumber(s),
-                                                spellName = spellName,
-                                                spellCost = spellCost, 
-                                                rank = rank, 
-                                                rankName = rankName,
-                                                spellTexture = spellTexture,
-                                        }
+                if not rank then
+                        rank = 1
+                        rankName = "Rank 1"
+                end
+                
+                --
+                -- Akward Ranks, check for them
+                --
+                local ak_found, _, akwardSpell = ME_SpellHasAkwardRank(l_spell)
+                local spellManaIndex = spellCost
+                if ak_found == false then
+                        ak_found = (
+                                (string.find(l_spell,"create%s+") and (Select(2,UnitClass("player")) == "WARLOCK")) or
+                                (string.find(l_spell,"conjure mana%s+") and (Select(2,UnitClass("player")) == "MAGE"))
+                        )
+                end
+                
+                
+                -- Soulstone was a pain, only way to diff from rank is to get the health restored
+                if ak_found and string.find(l_spell,"soulstone") then
+                        if ME_SpellTooltipTextLeft5:IsShown() then
+                                local h_found,_,h_restore = string.find(ME_SpellTooltipTextLeft5:GetText(),"(%d+)")
+                                if h_found then
+                                        spellManaIndex = tonumber(h_restore)
                                 end
                         end
                 end
+                
+                
+                
+                if ak_found then
+                        l_spell,l_rank = ME_SpellSplitRank(l_spell,true)
+                        spellName = akwardSpell
+                        
+                        --make a creation spell for conjured items
+                        if string.find(l_spell,"conjure %a+") then
+                                l_spell = "create "..l_spell
+                        end
+                        
+                        if not manaTable[l_spell] then
+                                manaTable[l_spell] = {  
+                                        akwardSpell = ak_found,
+                                        powerType = powerType, 
+                                        maxRanks = 1, 
+                                        isChanneled = isChanneled,
+                                        powerCost = {}
+                                }
+                        else
+                                manaTable[l_spell].maxRanks = manaTable[l_spell].maxRanks + 1
+                        end
+                        
+                        if not manaTable[l_spell]["powerCost"][spellManaIndex] then
+                                manaTable[l_spell]["powerCost"][spellManaIndex] = {
+                                        id = tonumber(s),
+                                        spellName = spellName,
+                                        spellCost = spellCost,
+                                        rankName = rankName,
+                                        rank = 0, 
+                                        spellTexture = spellTexture,
+                                }
+                        end
+                else
+                        --make a creation spell for conjured items
+                        if string.find(l_spell,"conjure %a+") then
+                                l_spell = "create "..l_spell
+                        end
+                        
+                        if not ME_Spells[l_spell] then
+                                ME_Spells[l_spell] = {  
+                                        akwardSpell = ak_found,
+                                        powerType = powerType, 
+                                        maxRanks = rank, 
+                                        isChanneled = isChanneled
+                                }
+                        else
+                                local oldMaxRank = ME_Spells[l_spell].maxRanks
+                                if (not oldMaxRank or (rank > oldMaxRank)) then
+                                        ME_Spells[l_spell].maxRanks = rank
+                                end
+                        end
+                        
+                        if not ME_Spells[l_spell][rankName] then
+                                ME_Spells[l_spell][rankName] = {
+                                        id = tonumber(s),
+                                        spellName = spellName,
+                                        spellCost = spellCost, 
+                                        rank = rank, 
+                                        rankName = rankName,
+                                        spellTexture = spellTexture,
+                                }
+                        end
+                end
         end
+        
+        ME_ApplySpellFilter(filterFN,BOOKTYPE_SPELL)
         
         -- Sorts out the Ranks for Warlock akward ranks, such as [minor,lessor,greater,major] for smartcast
         -- This has been a real pain in the ass, but finaly works

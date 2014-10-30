@@ -234,6 +234,45 @@ function ME_HasItem( name )
         return nil
 end
 
+function ME_GetItemCount( itemName )
+        if not itemName then return nil end
+        
+        itemCount = nil
+        local found, item = ME_HasItem(itemName)
+        if found and item then
+                itemCount = item.count
+        else 
+                itemName = string.lower(itemName)
+                for container = 0, 4 do
+                        for slot = 1, GetContainerNumSlots(container) do
+                                itemLink = GetContainerItemLink(container, slot)
+                                if itemLink then
+                                        if string.lower(Select(2,ME_GetLinkInfo(itemLink))) == itemName then
+                                                thisCount = Select(2,GetContainerItemInfo(container, slot))
+                                                if ( not itemCount ) then
+                                                        itemCount = 0
+                                                end
+                                                itemCount = itemCount + thisCount
+                                        end
+                                end
+                        end
+                end
+                for slot = 0, 19 do
+                        itemLink = GetInventoryItemLink("player", slot)
+                        if itemLink then
+                                if string.lower(Select(2,ME_GetLinkInfo(itemLink))) == itemName then
+                                        if not itemCount then
+                                                itemCount = 0
+                                        end
+                                        itemCount = itemCount + GetInventoryItemCount("player", slot)
+                                end
+                        end
+                end
+        end
+        
+        return itemCount
+end
+
 function ME_GetItemInfo( name, smartcast )
         if smartcast then
                 name = ME_FindBestItemOf(name)
@@ -253,6 +292,7 @@ function ME_UseItemByName( name, target, smartcast )
         if not item[1].bag then
                 return
         end
+        
         if found then
                 if item[1].slot then
                         UseContainerItem(item[1].bag,item[1].slot,target)
@@ -280,6 +320,31 @@ function ME_PickItemByName( name )
         end
 end
 
+function ME_FindItemByID( id )
+        for k,v in pairs(ME_Bags) do
+                if v.id == id then
+                        return true, ME_GetItemCount(v.name)
+                end
+        end
+        return false,0
+end
+
+function ME_IsItemOfType( id, itemType )
+        if id>0 then
+                local t_list = ME_FindBestOf_Table[itemType]
+                if t_list then
+                        for k,v in pairs(t_list) do
+                                if id == v then
+                                        return true
+                                end
+                        end
+                end
+        end
+
+        return
+end
+
+--Return name,id,link
 function ME_FindBestItemOf( name )
         name = string.lower(name or "")
         local t_list = ME_FindBestOf_Table[name]
@@ -361,28 +426,17 @@ function ME_EquipItem( macro )
 end
 
 function ME_UpdateBags( ... )
-        WipeTable(ME_Bags)
+        ME_Bags = WipeTable(ME_Bags)
         
-        if not ME_Bags then
-                ME_Bags = {}
-        end
-        
-        for i = 0, 4 do
-                for j = 1, GetContainerNumSlots(i) do
-                        local itemLink = GetContainerItemLink(i, j)
-                        
-                        if itemLink then
-                                local id,name = ME_GetLinkInfo(itemLink)
-                                if id>0 and name ~= nil then
-                                        name = string.lower(name)
-                                        
-                                        if not ME_Bags[name] then
-                                                ME_Bags[name] = { link = itemLink, id = id, name = name }
-                                        end
-                                        
-                                        table.insert(ME_Bags[name],{ bag=i, slot=j })
-                                end
-                        end
+        local function filterFN(itemLink,id,name,bag,slot)
+                local l_name = string.lower(name)
+                if not ME_Bags[l_name] then
+                        ME_Bags[l_name] = { link = itemLink, id = id, name = name, count = 1 }
+                else
+                        ME_Bags[l_name].count = ME_Bags[l_name].count + 1
                 end
+                table.insert(ME_Bags[l_name],{ bag=bag, slot=slot })
         end
+        
+        ME_ApplyBagFilter(filterFN)
 end

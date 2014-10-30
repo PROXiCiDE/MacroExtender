@@ -1,8 +1,131 @@
 local L = ME_GetLocale()
 
+MacroExtender_Options = nil
+MacroExtender_OptionsDefaults = {
+        MacroUI = true,
+}
+
+local ME_OptionOps = {
+        ['+d'] = function(str) return string.find(str,"%d+") end,
+        ['+a'] = function(str) return string.find(str,"%a+") end,
+        ['+w'] = function(str) return string.find(str,"%w+") end,
+}
+
+
 --TODO: Implement help / settings to control Macro Extender
 --Currently being used for debugging
 --Do not use these
+
+local function IsOptionEnabled( option )
+        if option then
+                return L["ENABLED"]
+        end
+        return L["DISABLED"]
+end
+
+function InitAddon( ... )
+        if not MacroExtender_Options then
+                MacroExtender_Options = ME_ShallowCopy(MacroExtender_OptionsDefaults)
+        end
+end
+
+function CheckOptionSyntax(args, params)
+        if not args then return end
+        
+        local count = 0
+        for k,v in splitIter(",", params) do
+                count = count + 1
+        end
+        
+        local argc = (table.getn(args) - 1)
+        if  argc < count then
+                return false
+        end
+        
+        local i = 2
+        local found = 0
+        local num_params = 0
+        local invalidArgs = { index = {}, args = {}}
+        for k,v in splitIter(",", params) do
+                local option = args[i]
+                if option then
+                        if ME_OptionOps[v] then
+                                if ME_OptionOps[v](option) then
+                                        found = found + 1
+                                else
+                                        table.insert(invalidArgs["index"], i - 1)
+                                        table.insert(invalidArgs["args"], option)
+                                end
+                        else
+                                local correct_arg
+                                if string.find(v,"/") then
+                                        for _,y in splitIter("/",v) do
+                                                if y == option then
+                                                        found = found + 1
+                                                        correct_arg = true
+                                                end
+                                        end
+                                        
+                                        if not correct_arg then
+                                                table.insert(invalidArgs["index"], i - 1)
+                                                table.insert(invalidArgs["args"], option)
+                                        end
+                                end
+                        end
+                else
+                        break
+                end
+                i = i + 1
+                num_params = num_params + 1
+        end
+        
+        return found == count, invalidArgs, num_params
+end
+
+function ME_Usage( args, help, usage, params, option)
+        if not args then return end
+        
+        local function UnpackArgs( tbl, num_params )
+                local t={}
+                num_params = num_params or table.getn(tbl)
+                for i=2, num_params + 1 do
+                        if not tbl[i] then
+                                break
+                        end
+                        table.insert(t,tbl[i])
+                end
+                
+                return unpack(t)
+        end
+        
+        if type(help) == "table" then
+                -- future development? May not be worth doing
+        else
+                if not args[2] then
+                        ME_Print(help)
+                        ME_Print(L["Usage"]..": /%s %s",args[1], usage)
+                        return nil
+                else
+                        local results, invalidArgs, numArgs = CheckOptionSyntax(args,params)
+                        if not results then
+                                if invalidArgs then
+                                        local param_idx, param_args = invalidArgs["index"][1],invalidArgs["args"][1]
+                                        if table.getn(invalidArgs["index"]) > 1 then
+                                                param_idx = table.concat(invalidArgs["index"],", ")
+                                                param_args = table.concat(invalidArgs["args"],", ")
+                                        else
+                                        end
+                                        ME_Print("")
+                                        ME_Print(L["Usage"]..": /%s %s",args[1], usage)
+                                        ME_Print(L["Unknown Option"]..": Args(%s) -> %s",param_idx,param_args)
+                                end
+                        end
+                        return UnpackArgs(args, numArgs)
+                end
+        end
+        return nil
+end
+
 local function ProxMacro_Handler(msg,editbox)
         if  msg or msg ~= "" then
                 local args = {};
@@ -13,32 +136,34 @@ local function ProxMacro_Handler(msg,editbox)
                 end
                 
                 local cmd = string.lower(args[1] or "")
-                if cmd == "create" then
-                        local cmd2 = string.lower(args[2] or "")
-                        local name = args[3]
-                        if cmd2 == "equiplist" and name then
-                                ME_EquipSaveMacro(name,true)
-                        end
-                end
                 
-                if cmd == "buff" then
-                        local i = 0
-                        while GetPlayerBuff(i) >= 0 do
-                                local id,cancel = GetPlayerBuff(i,"HELPFUL|HARMFUL|PASSIVE")
-                                if(id > -1) then
-                                        ME_Print("%d,%s",id,GetPlayerBuffTexture(id))
+                if cmd == "macroui" then
+                        local option = ME_Usage(args, "MacroUI "..L["interface improvement"], "on/off","on/off", MacroExtender_Options.MacroUI)
+                        if option then
+                                local option = string.lower(option)
+                                
+                                local show = true
+                                if option == "on" then
+                                        MacroExtender_Options.MacroUI = true
+                                elseif option == "off" then
+                                        MacroExtender_Options.MacroUI = nil
                                 end
-                                i = i + 1
+                        else
+                                ME_Print("MacroUI "..L["is currently"].." %s",IsOptionEnabled(MacroExtender_Options.MacroUI))
                         end
                 end
         end
 end        
 
-SLASH_PXMACRO1 = "/pxmacro"
+SLASH_PXMACRO1 = "/mex"
 SlashCmdList["PXMACRO"] = ProxMacro_Handler
 
+--Save the old cast macro command
+SLASH_PXOLDCAST1 = "/oldcast"
+SlashCmdList["PXOLDCAST"] = SlashCmdList["CAST"]
 
 -- Macros
+-- /castx will remain stay for compatability issues
 SLASH_PXCASTX1 = "/castx"
 SLASH_PXCASTX2 = "/use"
 SlashCmdList["PXCASTX"] = function (msg,editbox)
@@ -46,6 +171,9 @@ SlashCmdList["PXCASTX"] = function (msg,editbox)
                 ME_CastSpell(msg)
         end
 end
+
+-- Replace the old /cast with the new casting spell
+SlashCmdList["CAST"] = SlashCmdList["PXCASTX"]
 
 SLASH_PXCASTSEQUENCE1 = "/castsequence"
 SLASH_PXCASTSEQUENCE2 = "/castseq"
@@ -60,6 +188,13 @@ SLASH_PXCASTRANDOM2 = "/userandom"
 SlashCmdList["PXCASTRANDOM"] = function (msg,editbox)
         if  msg or msg ~= "" then
                 ME_CastRandom(msg)
+        end
+end
+
+SLASH_PXCLICK1 = "/click"
+SlashCmdList["PXCLICK"] = function (msg,editbox)
+        if  msg or msg ~= "" then
+                ME_Click(msg)
         end
 end
 
@@ -163,5 +298,31 @@ SLASH_PXPETSTAY1 = "/petstay"
 SlashCmdList["PXPETSTAY"] = function (msg,editbox)
         if  msg or msg ~= "" then
                 ME_GenericFunction(msg,function() if UnitExists("pet") then PetWait() end end)
+        end
+end
+
+SLASH_PXHEARTHSTONE1 = "/hearth"
+SlashCmdList["PXHEARTHSTONE"] = function (msg,editbox)
+        if  msg or msg ~= "" then
+                ME_GenericFunction(msg,function() 
+                                local found,item = ME_HasItem("hearthstone")
+                                if found and item then
+                                        local startTime = GetContainerItemCooldown(item[1].bag,item[1].slot)
+                                        if startTime == 0 then
+                                                UseContainerItem(item[1].bag,item[1].slot)
+                                        else
+                                                Stuck()
+                                        end
+                                end
+                end)
+        end
+end
+
+SLASH_PXMOUNT1 = "/mount"
+SlashCmdList["PXMOUNT"] = function (msg,editbox)
+        if  msg or msg ~= "" then
+                ME_GenericFunction(msg,function(action)
+                                ME_CallMount(action)
+                end)
         end
 end

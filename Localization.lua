@@ -14,9 +14,26 @@ if string.find(LOCALE,"^en") then return end
 
 if LOCALE == "esES" or LOCALE == "esMX" then
         -- Spanish translations go here
-        L["Increases speed by (%d+)%%."] = "Increases speed by (%d+)%%."
+        
+        L["ENABLED"] = "ENABLED"
+        L["DISABLED"] = "DISABLED"
+        L["is currently"] = "is currently"
+        L["interface improvement"] = "interface improvement"
+        
+        --Errors
         L["Unknown Option"] = "Unknown Option"
         L["Syntax Error"] = "Syntax Error"
+        L["Usage"] = "Usage"
+        
+        --Mount Information
+        L["Requires Riding %((%d+)%)"] = "Requires Riding %((%d+)%)"
+        L["Increases speed by (%d+)%%."] = "Increases speed by (%d+)%%."
+        
+        L["Summon Warhorse"] = "Summon Warhorse"
+        L["Summon Charger"] = "Summon Charger"
+        L["Summon Dreadsteed"] = "Summon Dreadsteed"
+        L["Summon Felsteed"] = "Summon Felsteed"
+        
 return end
 
 if LOCALE == "deDE" then

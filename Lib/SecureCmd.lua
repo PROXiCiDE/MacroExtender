@@ -26,7 +26,7 @@ local SecureCmdOptionHandlers = {
         -- WOW Conditions 
         --
         combat = function(target, desired)
-                return SecureCmdOptionEval(UnitAffectingCombat("player") or UnitAffectingCombat("pet") or 0, tonumber(desired))
+                return SecureCmdOptionEval((UnitAffectingCombat("player") or UnitAffectingCombat("pet")) or 0, tonumber(desired))
         end,
         
         exists = function(target, desired)
@@ -221,6 +221,34 @@ local SecureCmdOptionHandlers = {
                 return false
         end,
         
+        pmana = function(target,desired)
+                if desired then
+                        local found,_,operand,num = string.find(desired, "%s*([<>=]+)%s*(%d+)")
+                        if found then
+                                local op_f = SecureCmdRelationalOperatorsHandlers[operand]
+                                if op_f then
+                                        num = tonumber(num)
+                                        return op_f(UnitManaPct("player"),num)
+                                end
+                        end
+                end
+                return false
+        end,
+        
+        phealth = function(target,desired)
+                if desired then
+                        local found,_,operand,num = string.find(desired, "%s*([<>=]+)%s*(%d+)")
+                        if found then
+                                local op_f = SecureCmdRelationalOperatorsHandlers[operand]
+                                if op_f then
+                                        num = tonumber(num)
+                                        return op_f(UnitHealthPct("player"),num)
+                                end
+                        end
+                end
+                return false
+        end,
+        
         pethappy = function (target,...) 
                 if ( not UnitExists("pet") or (Select(2,UnitClass("player")) ~= "HUNTER") ) then
                         return false
@@ -303,6 +331,14 @@ local SecureCmdOptionHandlers = {
         
         shadowform = function(target, desired)
                 return SecureCmdOptionEval(IsShadowform() or 0, tonumber(desired))
+        end,
+        
+        iscaster = function(target, desired)
+                return SecureCmdOptionEval(IsUnitCaster(target) or 0, tonumber(desired))
+        end,
+        
+        ismelee = function(target, desired)
+                return SecureCmdOptionEval((IsUnitCaster(target)==false) or 0, tonumber(desired))
         end,
         
 }

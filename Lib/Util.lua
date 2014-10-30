@@ -36,8 +36,22 @@ function PXED_PrintArgs( tbl )
         ME_Print("%s",str)
 end
 
+function ME_ShallowCopy(orig)
+        local orig_type = type(orig)
+        local copy
+        if orig_type == 'table' then
+                copy = {}
+                for orig_key, orig_value in pairs(orig) do
+                        copy[orig_key] = orig_value
+                end
+        else -- number, string, boolean, etc
+                copy = orig
+        end
+        return copy
+end
+
 function IsString( param )
-        return string.find(param,"%a+")
+        return type(param) == "string"
 end
 
 function IsNumber( param )
@@ -54,10 +68,21 @@ function Select(a,...)
         end
 end
 
-function WipeTable( tab )
-        for k,v in pairs(tab) do
-                tab[k] = nil
+function WipeTable( tbl )
+        if (not (type(tbl) == "table")) then
+                return tbl
         end
+        
+        for k,v in pairs(tbl) do
+                if type(v) == "table" then
+                        tbl[k] = WipeTable(v)
+                else
+                        tbl[k] = nil
+                end
+        end
+        
+        table.setn(tbl,0)
+        return {}
 end
 
 function strtrim(s)
@@ -104,9 +129,7 @@ function splitNext(sep, body)
                 return false, body;
         end
 end
-function commaIterator(str) return splitNext, ",", str; end
-
-
+function splitIter(sep,str) return splitNext, sep, str end
 
 function GetItemInfoType(link)
         local id = link
@@ -274,8 +297,8 @@ function GetPlayerMountBuffInfo ()
 end
 
 function IsUnitCaster( unit )
-        local class = GetUnitClass(unit)
-        if class and (class == "MAGE" or class == "PRIEST" or class == "WARLOCK" ) then
+        local class = Select(2,UnitClass(unit))
+        if ME_CheckResultsFromTable(class,{"MAGE","PRIEST","WARLOCK"}) or (class == "DRUID" and (UnitPowerType(unit) == 0)) then
                 return true
         end
         return false
@@ -361,6 +384,16 @@ function IsModifierKeyDown( ... )
         return (IsShiftKeyDown() or IsControlKeyDown() or IsAltKeyDown())
 end
 
+function GetRidingSkill()
+        for i=1, GetNumSkillLines() do
+                local skillName, _, _, skillRank = GetSkillLineInfo(i)
+                if skillName == "Riding" then
+                        return skillRank
+                end
+        end
+        return
+end
+
 function IsStealthed( ... )
         local pcClass = Select(2,UnitClass("player"))
         if pcClass == "ROGUE" or pcClass == "DRUID" then
@@ -390,8 +423,10 @@ end
 
 function ME_GenericFunction( macro, fn )
         if type(fn) ~= "function" then end
-        if SecureCmdOptionParseConditions(macro) then
-                fn()
+        
+        local action,target,smartcast = SecureCmdOptionParse(macro)
+        if action then
+                fn(action,target,smartcast)
         end
 end
 
@@ -404,4 +439,121 @@ function ME_SortNumTable( Table, Desc )
                 table.sort(temp, function(a, b) return a > b end)
         end
         return temp
+end
+
+
+-- /run MultiActionButtonDown("MultiBarBottomLeft", 1); MultiActionButtonUp("MultiBarBottomLeft", 1);
+-- /run ME_ClickButton("MultiBarBottomLeft1",1)
+
+local ClickButtonCache = {};
+function ME_ClickButton( action, onSelf, smartcast )
+        local _,_,name, mouseButton, down = string.find(action, "([^%s]+)%s+([^%s]+)%s*(.*)");
+        if not name then
+                name = action
+        end
+        
+        if BonusActionBarFrame:IsShown() and string.find(name,"Action") then
+                if not string.find(name,"Bonus") then
+                        name = "Bonus"..name
+                end
+        end
+        
+        if not ClickButtonCache[name] then
+                local _,_,b_name,b_id = string.find(name,"(%a+)(%d+)")
+                if b_name and b_id then
+                        ClickButtonCache[name] = getglobal(b_name.."Button"..b_id)
+                end
+        end
+        
+        local button = ClickButtonCache[name]
+        if button and button:IsObjectType("Button") then
+                if ( button:GetButtonState() == "NORMAL" ) then
+                        button:SetButtonState("PUSHED");
+                end
+                
+                if ( button:GetButtonState() == "PUSHED" ) then
+                        button:SetButtonState("NORMAL");     
+                        button:SetButtonState("NORMAL");
+                        
+                        UseAction(ActionButton_GetPagedID(button), 0, onSelf);
+                        if ( IsCurrentAction(ActionButton_GetPagedID(button)) ) then
+                                button:SetChecked(1);
+                        else
+                                button:SetChecked(0);
+                        end
+                end
+        end
+end
+
+--
+-- Filters
+-- These are great for cutting down repetitive typing
+--
+
+--callbackFN(itemLink,id,name,bag,slot)
+function ME_ApplyBagFilter( callbackFN )       
+        for bag = 0, 4 do
+                for slot = 1, GetContainerNumSlots(bag) do
+                        local itemLink = GetContainerItemLink(bag, slot)
+                        if itemLink then
+                                local id,name = ME_GetLinkInfo(itemLink)
+                                if id > 0 and name ~= nil then
+                                        callbackFN(itemLink,id,name,bag,slot)
+                                end
+                        end
+                end
+        end
+end
+
+--callbackFN(spellTabName,spellIndex,spellCost,spellType,isChanneled)
+function ME_ApplySpellFilter( callbackFN, bookType )
+        ME_SpellTooltip:SetOwner(UIParent,"ANCHOR_NONE")
+        for i = 1, GetNumSpellTabs() do
+                local spellTabName, texture, offset, numSpells = GetSpellTabInfo(i)
+                
+                if not spellTabName then  
+                        break
+                end   
+                
+                for spellIndex = offset + 1, offset + numSpells do
+                        local spellName, rankName = GetSpellName(spellIndex, bookType)
+                        local spellTexture = GetSpellTexture(spellIndex, bookType)
+                        
+                        ME_SpellTooltip:ClearLines()
+                        ME_SpellTooltip:SetSpell(spellIndex,bookType)
+                        
+                        local tooltipText3 = ME_SpellTooltipTextLeft3:GetText()
+                        local isChanneled = (ME_SpellTooltip:NumLines()>=3 and ME_SpellTooltipTextLeft3:IsShown() and ME_SpellTooltipTextLeft3:GetText() == "Channeled") 
+                        
+                        local spellCost = 0
+                        local tt_found,_,spellType
+                        
+                        if ME_SpellTooltipTextLeft2:IsShown() then
+                                tt_found,_,spellCost,spellType = string.find(ME_SpellTooltipTextLeft2:GetText(),"(%d+)(.*)")
+                                if tt_found then
+                                        spellCost = tonumber(spellCost)
+                                        if spellType ~= nil or spellType ~= "" then
+                                                spellType = strtrim(spellType)
+                                        end
+                                end
+                        end
+                        
+                        --
+                        --Reserved for reading the spell reagents
+                        --
+                        -- if ME_SpellTooltipTextLeft4:IsShown() then
+                        -- end
+                        
+                        callbackFN(spellTabName,spellIndex,spellName,rankName,spellCost,spellTexture,spellType,isChanneled)
+                end
+        end
+end
+
+function ME_HookFunction(oldFN, newFN)
+        local fn = getglobal(oldFN)
+        if fn ~= getglobal(newFN) then
+                setglobal(oldFN, getglobal(newFN))
+                return true
+        end
+        return false
 end

@@ -9,14 +9,55 @@ MacroExtender addon for 1.12.1 World of Warcraft
 > MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more
 
 ##Version
-1.06.5
+1.06.6
 
 Read the **Changelog.txt** for details
 
 #Installination
-  - Download **MacroExtender**
-  - Create a directory into your *World of Warcraft/Interface/AddOns* folder named **MacroExtender**
-  - Extract contents of downloaded file into that new folder
+> If you are updating **MacroExtender**, please delete all contents of the old directory first to prevent any issues.
+
+* Download **MacroExtender**
+* Create a directory into your *World of Warcraft/Interface/AddOns* folder named **MacroExtender**
+* Extract contents of downloaded file into that new folder
+
+#Conflicts
+* SpellTimer
+ * Hooks onto CastSpellByName, missing _onSelf_ argument
+* Libraries
+ * SpellStatus-1.0
+   * Hooks onto UseContainerItem, missing _onSelf_ argument
+
+#Configuration
+>All of the config options can be changed with command line
+>More options will be made available in the future development process
+```
+/mex option param1 param2 param3
+```
+
+Option|Paramaters|Description
+:--|:--|:--
+macroui|on/off|Enable or Disable the MacroUI interface enhancements
+
+#Macro UI
+>You are now able to link items from your bags into the Macro UI. This allows cutting down time from typing a item by name
+
+***You can disable these features by disabling them***
+
+```
+/mex macroui off
+```
+
+* Open the macro frame via **/macro** command
+ * Create a new macro or edit a previous one
+* Open your bags
+ * **Shift + Left Click** on a item in your bags
+ * Item should now be added to your macro
+
+Key Combinations|UI Frame|If Empty|Non Empty
+:--|:--|:--|:-
+Shift + Left Click|Character Frame|/use SlotID|SlotID
+Shift + Control + Left Click|Character Frame|/equip [condition]ItemName|/equip [condition]ItemName
+Shift + Left Click|Bag Frame|/use ItemName|ItemName
 
 #Conditional Statements
 These can also be checked for falseness instead of trueness by prefixing them with **"no"**. For example, **[nocombat]** is a valid conditional and will only perform the actions following it if you are not in combat.
@@ -48,16 +89,20 @@ swimming|swim||Only detects when submerged in water and the Breathing Timer is a
 
 condition|alias|paramater|description
 :--|:--|:--|:--|
+ismelee|||Target is a melee class
+iscaster|||Target is a caster class
 mana||relational operators #n|Target mana is compared with #n
 health||relational operators #n|Target health is compared with #n
+pmana||relational operators #n|Same as **mana** except it checks the player character only
+phealth||relational operators #n|Same as **health** except it checks the player character only
 shadowform|shform||Priest is currently in shadowform
 petloyalty|petl|1/2/.../n|Hunter's pet loyalty level
 pethappy|peth||Hunter's pet is happy
 smartcast|||Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank
 buff||texture|Contains buff texture
 debuff||texture|Contains debuff texture
-pbuff||texture|Same as buff, checks the player character only
-pdebuff||texture|Same as debuff, checks the player character only
+pbuff||texture|Same as **buff** except it checks the player character only
+pdebuff||texture|Same as **debuff** except it checks the player character only
 ---
 
 >Relational operators for mana / health condition for comparison
@@ -77,14 +122,16 @@ operator|description
 
 command|alias|description
 :--|:--|:--
-castx|use|Extended version of cast which allow conditional behaviro
+cast|use **OR** castx|Extended version of cast which allow conditional behavior
 castsequence|castseq|Cast spells in successive order
 castrandom|userandom|Cast a random spell from the list
+click||Simulate a mouse click on a frame of type Button
 equip|eq|Equip items from the list
 pick||Picks up a item in the players inventory
 stopcasting||Stop casting or channeling a spell
 dismount||Dismounts your character
 cancelform||Cancels your current shapeshift/shadow/ghost wolf form
+mount||Mounts your character
 ---
 
 ##Inventory Slots
@@ -124,7 +171,7 @@ Multiple paramaters can be included by seperating them with a *slash* [**/**] ch
 
 **condition**:*param1/param2/.../paramN*
 
-Following example checks if any modifier key is down and not channeling the spell drain soul. If requirements are not meet it will cast the next sequence in the list
+Following example checks if any modifier key is down and not channeling the spell drain soul. If requirements are not met it will cast the next sequence in the list
 ```
 /castsequence [mod,nochanneling:drain soul]drain soul;reset=target/combat corruption,curse of agony,shadow bolt,shadow bolt,shadow bolt,shadow bolt
 ```
@@ -136,7 +183,7 @@ To prevent the above example from continuing with the next sequence in the list 
 
 ***smartcast***
 >Mana efficiency casting, will down rank the spell until it meets the required mana cost, if doesn't meet the requirement it will fail and try to cast without rank
-*/pick, /use, /equip, /castx, /castrandom, /castsequence*
+*/pick, /use, /equip, /cast, /castrandom, /castsequence*
 
 *Creation is class specific only*
 
@@ -164,7 +211,7 @@ soulstone|Warlock|create soulstone|Warlock soulstone
 >Creating a *healthstone* if the player is a *warlock*
 
 ```
-/castx [smartcast]create healthstone
+/cast [smartcast]create healthstone
 ```
 
 ***Buff / Debuff***
@@ -175,14 +222,14 @@ Castsequence will reset every 12 seconds / combat or target changes
 
 ####Correct way
 ```
-/castx [buff:@Shadow_Twilight]shadow bolt
+/cast [buff:@Shadow_Twilight]shadow bolt
 /castsequence [nochanneling,pet] reset=12/combat/target corruption,curse of agony,immolate
 ```
 
 ####Wrong way
 This will not succeed as it will target the player to cast **shadow bolt**
 ```
-/castx [target=player,buff:Shadow_Twilight]shadow bolt
+/cast [target=player,buff:Shadow_Twilight]shadow bolt
 ```
 
 ***PBuff / PDebuff***
@@ -190,7 +237,7 @@ This will not succeed as it will target the player to cast **shadow bolt**
 
 Will cast shadow bolt only if the warlock has gained Nightfall proc, otherwise cast immolate
 ```
-/castx [pbuff:Shadow_Twilight]shadow bolt;Imolate
+/cast [pbuff:Shadow_Twilight]shadow bolt;Imolate
 ```
 ___Pet commands___
 
@@ -214,27 +261,27 @@ reload|Reloads the user interface
 #Examples
 ##Warrior
 ```
-/castx [stance:1]Heroic Strike;Rend
-/castx [equipped:shields]defensive stance
+/cast [stance:1]Heroic Strike;Rend
+/cast [equipped:shields]defensive stance
 ```
 
 ##Hunter
 ```
-/castx [pet,nopethappy]feed pet
+/cast [pet,nopethappy]feed pet
 /pick [pet:boar,nopethappy]roasted quail
 ```
 
 ##Rogue
 ```
-/castx [stealth]Rupture;Sinister Strike
+/cast [stealth]Rupture;Sinister Strike
 ```
 
 ##Warlock
 ```
-/castx [smartcast]Shadow Bolt
-/castx [mod:ctrl]Immolate;Curse of Agony
-/castx [mod:shift,harm,nochanneling]Drain Life;Health Funnel
-/castx [harm,nodebuff:Shadow_CurseOfSargeras]Curse of Agony;Corruption
+/cast [smartcast]Shadow Bolt
+/cast [mod:ctrl]Immolate;Curse of Agony
+/cast [mod:shift,harm,nochanneling]Drain Life;Health Funnel
+/cast [harm,nodebuff:Shadow_CurseOfSargeras]Curse of Agony;Corruption
 
 /castrandom [combat]shadow bolt,immolate;curse of agony,corruption
 
@@ -247,7 +294,7 @@ reload|Reloads the user interface
 /petassist [pet,nomod,combat]
 /petattack [pet,mod:shift]
 
-/castx [nochanneling:drain life]Drain Life
+/cast [nochanneling:drain life]Drain Life
 
 /eq [smartcast]firestone
 ```
@@ -255,7 +302,7 @@ reload|Reloads the user interface
 >To create a warlock healthstone without repeative editing of a macro each spell rank learnt, use the smartcast option. Passing the spell without any rank information such as *minor/lesser/../major* If major is learnt by the player then it will cast *Create Soulstone (Major)()* automatically for the player if the mana requirement is met, if not it will down rank until successful. This works with all ***Create [Spell's]/Conjure [Spell's]***,
 
 ```
-/castx [smartcast]create healthstone
+/cast [smartcast]create healthstone
 ```
 
 >To use the best healthstone found in the player inventory ordered as follows *major/greater/../lesser*
@@ -267,20 +314,20 @@ reload|Reloads the user interface
 >Create healthstone while a modifier key is down otherwise use the healthstone
 
 ```
-/castx [mod,smartcast]create healthstone
+/cast [mod,smartcast]create healthstone
 /use [nomod,smartcast]healthstone
 ```
 
 >Bellow is equivalent of the example above just shorter
 
 ```
-/castx [mod,smartcast]create healthstone;[smartcast]healthstone
+/cast [mod,smartcast]create healthstone;[smartcast]healthstone
 ```
 
 >Following macro allows you to create a spellstone if a modifer key is down, if no modifer key is down then equip it if not already equipped then use it
 
 ```
-/castx [mod,smartcast]create spellstone;[nomod,smartcast,noequipped:17]spellstone;17
+/cast [mod,smartcast]create spellstone;[nomod,smartcast,noequipped:17]spellstone;17
 ```
 
 ##Mage
@@ -289,7 +336,7 @@ reload|Reloads the user interface
 
 ######Creating Conjured Water
 ```
-/castx [smartcast]create conjure water
+/cast [smartcast]create conjure water
 ```
 ######Using Conjured Water
 ```
@@ -298,7 +345,7 @@ reload|Reloads the user interface
 
 ######Creating Mana Crystal
 ```
-/castx [smartcast]create conjure mana
+/cast [smartcast]create conjure mana
 ```
 ######Using Mana Crystal
 ```
@@ -307,7 +354,7 @@ reload|Reloads the user interface
 
 ##Druid
 ```
-/castx [nostance:3]cat form;[stance:3,nostealth]prowl;pounce
+/cast [nostance:3]cat form;[stance:3,nostealth]prowl;pounce
 ```
 
 ##Misc
@@ -318,4 +365,41 @@ reload|Reloads the user interface
 /equip [stance:2]The Face of Death, Quel'Serrar
 
 /equip [nocombat] dreadmist mask,dreadmist robe,dreadmist bracers,dreadmist wraps,dreadmist belt,dreadmist leggings,dreadmist sandals,blade of the new moon,rune band of wizardry,tome of the lost
+```
+
+#Mount
+>If left empty it will use the first mount found in the inventory
+
+```
+/mount
+```
+
+###Randomly
+>Will randomy select a mount in the players inventory
+
+```
+/mount random
+```
+
+###Search
+>Will search the player inventory and will mount the character with very the first results found **red skele**. The ordered of search is determined by location of the bag and inventory slot
+
+**If the player inventory contains the following mounts**
+
+* Green Skeletal Horse
+* Blue Skeletal Horse
+* Red Qiraji Resonating Crystal
+* Red Skeletal Warhorse
+* Red Skeletal horse
+
+The search will go from *Top* to *Bottom* until the search critera is met. The result would be **Red Skeletal Warhorse** as long the player is not in combat
+```
+/mount [nocombat]red skele
+```
+
+#####Wildcard Search
+>Wildcard searching for **Red Skeletal Warhorse**. It will search all of the player collected mounts until the first pattern in the search critera found
+
+```
+/mount [nocombat]red.*war
 ```
