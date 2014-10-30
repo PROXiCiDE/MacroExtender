@@ -55,7 +55,7 @@ macroui|on/off|Enable or Disable the MacroUI interface enhancements
 
 
 Key Combinations|UI Frame|If Empty|Non Empty
-:--|:--|:--|:-|
+:--|:--|:--|:--|
 Shift + Left Click|Character Frame|/use SlotID|SlotID
 Shift + Control + Left Click|Character Frame|/equip [condition]ItemName|/equip [condition]ItemName
 Shift + Left Click|Bag Frame|/use ItemName|ItemName
