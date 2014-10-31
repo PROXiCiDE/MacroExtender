@@ -1,7 +1,9 @@
 local L = ME_GetLocale()
 ME_Mounts = {}
 
---TODO: Add Class ME_Mounts
+-- Support added for Qiraji Mounts
+-- Changed the way Class mounts are stored
+
 function ME_CallMount( action )
         if not ME_Mounts then return end
         
@@ -10,18 +12,23 @@ function ME_CallMount( action )
                 local results = true
                 
                 --Cuts down on the repetive If statements
-                local function BooleanCheck( condition )
-                        if condition then
-                                results = true
-                        else
-                                results = false
+                local function BooleanCheck( option,  condition )
+                        if option then
+                                if condition then
+                                        results = true
+                                else
+                                        results = false
+                                end
                         end
                 end
                 
                 if tbl then
                         if not tbl.spell then
-                                BooleanCheck(tbl.playerLevel and (UnitLevel("player") >= tbl.playerLevel))
-                                BooleanCheck(tbl.skillLevel and (GetRidingSkill() >= tbl.skillLevel))
+                                
+                                BooleanCheck(tbl.playerLevel, tbl.playerLevel and (UnitLevel("player") >= tbl.playerLevel))
+                                BooleanCheck(tbl.skillRiding, tbl.skillRiding and (GetRidingSkill() >= tbl.skillRiding))
+                                BooleanCheck(tbl.qiraji, tbl.qiraji and (GetZoneText() == "Ahn'Qiraj"))
+                                
                                 
                                 if results then
                                         UseContainerItem(tbl.bag,tbl.slot)
@@ -61,14 +68,15 @@ function ME_CallMount( action )
         end
 end
 
+--Was changed for Spell Texture, should help with Localization issues
 local ME_MountSpells = {
         ["PALADIN"] = {
-                ["Summon Warhorse"] = 150,
-                ["Summon Charger"] = 75,
+                ["Ability_Mount_Charger"] = 150,
+                ["Spell_Nature_Swiftness"] = 75,
         },
         ["WARLOCK"] = {
-                ["Summon Dreadsteed"] = 150,
-                ["Summon Felsteed"] = 75
+                ["Ability_Mount_Dreadsteed"] = 150,
+                ["Spell_Nature_Swiftness"] = 75
         },
 }
 
@@ -82,33 +90,42 @@ function ME_UpdateMounts( ... )
         local function item_filterFN(itemLink,id,name,bag,slot)
                 local texture = Select(9,GetItemInfo(id))
                 if texture then
-                        local skill,skillLevel,playerLevel
-                        
                         ME_InvTooltip:ClearLines()
                         ME_InvTooltip:SetHyperlink('item:'..id)
                         
-                        for i=1,ME_InvTooltip:NumLines() do
-                                local tip = getglobal("ME_InvTooltipTextLeft"..i)
-                                if tip and tip:IsShown() then
-                                        local _,_,requires = string.find(tip:GetText(),"Requires (.+)")
-                                        if requires then
-                                                _,_,skill,skillLevel = string.find(requires,"(.+) %((%d+)%)")
-                                                _,_,playerLevel = string.find(requires,"Level (%d+)")
-                                                if skillLevel then
-                                                        skillLevel  = tonumber(skillLevel)
-                                                elseif playerLevel then
-                                                        playerLevel  = tonumber(playerLevel)
+                        if string.find(texture,"_Mount_",1,true) or string.find(texture,"_QirajiCrystal_",1,true) then
+                                local skill,skillLevel,playerLevel
+                                local qiraji, pvp
+                                
+                                if string.find(texture,"_QirajiCrystal_",1,true) then
+                                        qiraji = true
+                                end
+                                
+                                for i=1,ME_InvTooltip:NumLines() do
+                                        local tip = getglobal("ME_InvTooltipTextLeft"..i)
+                                        if tip and tip:IsShown() then
+                                                local _,_,requires = string.find(tip:GetText(),"Requires (.+)")
+                                                if requires then
+                                                        local _,_,r_skill,r_skillLevel = string.find(requires,"(.+) %((%d+)%)")
+                                                        local _,_,r_playerLevel = string.find(requires,"Level (%d+)")
+                                                        if r_skillLevel then
+                                                                skill = r_skill
+                                                                skillLevel  = tonumber(r_skillLevel)
+                                                        elseif r_playerLevel then
+                                                                playerLevel = tonumber(r_playerLevel)
+                                                        end
                                                 end
                                         end
                                 end
-                        end
-
-                        if string.find(texture,"Ability_Mount") then
+                                
                                 ME_Mounts.count = ME_Mounts.count + 1
+                                
                                 table.insert(ME_Mounts, { 
                                                 link = itemLink, 
                                                 id = id,
                                                 skill = skill,
+                                                qiraji = qiraji,
+                                                pvp = pvp,
                                                 playerLevel = playerLevel,
                                                 skillLevel = skillLevel,
                                                 name = name, 
@@ -120,13 +137,16 @@ function ME_UpdateMounts( ... )
         end
         
         local function spell_filterFN(spellTabName,spellIndex,spellName,rankName,spellCost,spellTexture,spellType,isChanneled)
-                local skill = ME_MountSpells[class][spellName]
+                spellTexture = Select(3,string.find(spellTexture,"([%w%_]+)$"))
+                local skill = ME_MountSpells[class][spellTexture]
                 if skill then
                         ME_Mounts.count = ME_Mounts.count + 1
                         table.insert(ME_Mounts, {
                                         spell = spellName,
                                         name = spellName,
                                         skill = skill,
+                                        playerLevel = 1
+                                        
                         })    
                 end
         end

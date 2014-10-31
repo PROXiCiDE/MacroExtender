@@ -2,6 +2,12 @@
 -- VERSION HISTORY
 ----------------------------------------------------------------------------------
 
+1.06.8 -
+		Mounts
+		Support for Qiraji
+		removed the limitations on class mounts due to localization
+		pvp mounts should now work correctly
+
 1.06.7 -
 		Mount: Bug should be fixed
 
