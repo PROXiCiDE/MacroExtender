@@ -18,6 +18,14 @@ function ME_Print( ... )
         end
 end
 
+--saftey version, prevent nil errors
+function ME_StringLower( str )
+        if str then
+                return string.lower(str)
+        end
+        return ""
+end
+
 --Similar to DevTool_Dump but very lightweight
 function PXED_PrintArgs( tbl )
         local str = ""
@@ -153,12 +161,12 @@ end
 
 function HasDebuff(texture, unit)
         unit = unit or "player"
-        texture = string.lower(texture or "")
+        texture = ME_StringLower(texture)
         local idx = 1
         if texture or texture ~= "" then
                 while (UnitDebuff(unit, idx)) do
                         local textureDebuff, stacks = UnitDebuff(unit, idx)
-                        if (string.find(string.lower(textureDebuff), texture)) then
+                        if (string.find(ME_StringLower(textureDebuff), texture)) then
                                 return true, stacks
                         end
                         idx = idx + 1
@@ -171,7 +179,7 @@ function GetDebuffCount(texture, unit)
         unit = unit or "player"
         local idx = 1
         local count = 0
-        texture = string.lower(texture or "")
+        texture = ME_StringLower(texture or "")
         if texture or texture ~= "" then
                 while (UnitDebuff(unit, idx)) do
                         local textureDebuff, stacks = UnitDebuff(unit, idx)
@@ -186,12 +194,12 @@ end
 
 function HasBuff(texture, unit)
         unit = unit or "player"
-        texture = string.lower(texture or "")
+        texture = ME_StringLower(texture or "")
         local idx = 1
         if texture or texture ~= "" then
                 while (UnitBuff(unit, idx)) do
                         local textureBuff, stacks = UnitBuff(unit, idx)
-                        if (string.find(string.lower(textureBuff), texture)) then
+                        if (string.find(ME_StringLower(textureBuff), texture)) then
                                 return true, stacks
                         end
                         idx = idx + 1
@@ -490,22 +498,23 @@ end
 -- These are great for cutting down repetitive typing
 --
 
---callbackFN(itemLink,id,name,bag,slot)
+--callbackFN(itemName, id, bag, slot, itemLink, itemQuality,itemLevel,itemMinLevel,itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice)
 function ME_ApplyBagFilter( callbackFN )       
         for bag = 0, 4 do
                 for slot = 1, GetContainerNumSlots(bag) do
                         local itemLink = GetContainerItemLink(bag, slot)
                         if itemLink then
                                 local id,name = ME_GetLinkInfo(itemLink)
-                                if id > 0 and name ~= nil then
-                                        callbackFN(itemLink,id,name,bag,slot)
+                                if id and id > 0 and name ~= nil then
+                                        local itemName,_,itemQuality,itemLevel,itemMinLevel,itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(id)
+                                        callbackFN(itemName, id, bag, slot, itemLink, itemQuality,itemLevel,itemMinLevel,itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice)
                                 end
                         end
                 end
         end
 end
 
---callbackFN(spellTabName,spellIndex,spellCost,spellType,isChanneled)
+--callbackFN(bookType,spellTabName,spellIndex,spellName,rankName,spellCost,spellTexture,spellType,isChanneled)
 function ME_ApplySpellFilter( callbackFN, bookType )
         ME_SpellTooltip:SetOwner(UIParent,"ANCHOR_NONE")
         for i = 1, GetNumSpellTabs() do
@@ -544,7 +553,7 @@ function ME_ApplySpellFilter( callbackFN, bookType )
                         -- if ME_SpellTooltipTextLeft4:IsShown() then
                         -- end
                         
-                        callbackFN(spellTabName,spellIndex,spellName,rankName,spellCost,spellTexture,spellType,isChanneled)
+                        callbackFN(bookType,spellTabName,spellIndex,spellName,rankName,spellCost,spellTexture,spellType,isChanneled)
                 end
         end
 end
@@ -556,4 +565,16 @@ function ME_HookFunction(oldFN, newFN)
                 return true
         end
         return false
+end
+
+function ME_StringHash(text)
+        local counter = 1
+        local len = string.len(text)
+        for i = 1, len, 3 do 
+                counter = math.mod(counter*8161, 4294967279) +  -- 2^32 - 17: Prime!
+                (string.byte(text,i)*16776193) +
+                ((string.byte(text,i+1) or (len-i+256))*8372226) +
+                ((string.byte(text,i+2) or (len-i+256))*3932164)
+        end
+        return math.mod(counter, 4294967291) -- 2^32 - 5: Prime (and different from the prime in the loop)
 end

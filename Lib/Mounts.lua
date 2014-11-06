@@ -45,7 +45,7 @@ function ME_CallMount( action )
         end
         
         if action then
-                action = string.lower(action)
+                action = ME_StringLower(action)
                 if action == "random" then
                         local i = math.random(1,ME_Mounts.count)
                         if ME_Mounts[i] then
@@ -54,7 +54,7 @@ function ME_CallMount( action )
                 else
                         for i=1, table.getn(ME_Mounts) do
                                 if ME_Mounts[i] then
-                                        local l_name = string.lower(ME_Mounts[i].name)
+                                        local l_name = ME_StringLower(ME_Mounts[i].name)
                                         if string.find(l_name,action) then
                                                 if UseMount(ME_Mounts[i]) then
                                                         break
@@ -87,7 +87,7 @@ function ME_UpdateMounts( ... )
         ME_InvTooltip:SetOwner(UIParent,"ANCHOR_NONE")
         local class = Select(2,UnitClass("player"))
         
-        local function item_filterFN(itemLink,id,name,bag,slot)
+        local function item_filterFN(itemName, id, bag, slot, itemLink, itemQuality,itemLevel,itemMinLevel,itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice)
                 local texture = Select(9,GetItemInfo(id))
                 if texture then
                         ME_InvTooltip:ClearLines()
@@ -128,7 +128,7 @@ function ME_UpdateMounts( ... )
                                                 pvp = pvp,
                                                 playerLevel = playerLevel,
                                                 skillLevel = skillLevel,
-                                                name = name, 
+                                                name = itemName, 
                                                 bag= bag ,
                                                 slot= slot
                                 })
@@ -136,7 +136,7 @@ function ME_UpdateMounts( ... )
                 end
         end
         
-        local function spell_filterFN(spellTabName,spellIndex,spellName,rankName,spellCost,spellTexture,spellType,isChanneled)
+        local function spell_filterFN(bookType,spellTabName,spellIndex,spellName,rankName,spellCost,spellTexture,spellType,isChanneled)
                 spellTexture = Select(3,string.find(spellTexture,"([%w%_]+)$"))
                 local skill = ME_MountSpells[class][spellTexture]
                 if skill then

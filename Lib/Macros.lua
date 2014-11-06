@@ -1,5 +1,7 @@
-local oldContainerFrameItemButton_OnClick
-local oldPaperDollItemSlotButton_OnClick
+local oldContainerFrameItemButton_OnClick, oldPaperDollItemSlotButton_OnClick
+local oldMacroFrame_SaveMacro
+
+ME_MacroFrame_Saved = nil
 
 function CheckMacroSyntax( macro )
         local seps = {}
@@ -114,27 +116,47 @@ function FinishMacro( macro, command, addWhat )
         return macro..addWhat
 end
 
---Future development
-function GetMacroIcon( name )
-        local function GetIconPath( icon )
-                local _,_,path = string.find(icon,"Interface.Icons.(.+)") or icon
+local function GetIconPath( icon )
+        if icon then
+                local _,_,path = string.find(icon,"Interface.Icons.(.+)")
+                if not path then
+                        path = icon
+                end
                 return "Interface\\Icons\\"..path
         end
-        
-        local path
-        
+end
+
+function ME_GetMacroIcon( name )        
+        local path, texture
         local spellTable = ME_GetSpellTable(name)
         if spellTable and spellTable["Rank 1"] then
-                path = GetIconPath(spellTable["Rank 1"].spellTexture)
-        end
-        
-        if path then
-                for i=1, GetNumMacroIcons() do
-                        if GetMacroIconInfo(i) == path then
-                                return i
+                texture = spellTable["Rank 1"].spellTexture
+                path = MacroExtender_Icons[texture]
+        else
+                local found,itemTable = ME_HasItem(name)
+                if found and itemTable then
+                        texture = itemTable.itemTexture
+                        path = MacroExtender_Icons[texture]
+                else
+                        local item,_,slot = SecureCmdItemParse(name)
+                        if item and slot then
+                                local id = ME_GetLinkInfo(item)
+                                if id and id > 0 then
+                                        texture = Select(9,GetItemInfo(id))
+                                        path = MacroExtender_Icons[texture]
+                                end
                         end
                 end
         end
+        
+        if not path then
+                -- place hacks here
+        end
+        return path, GetIconPath(texture)
+end
+
+function ME_GetMacroIconByTexture( name )
+        return MacroExtender_Icons[name]
 end
 
 function ME_PaperDollItemSlotButton_OnClick(button, ignoreModifiers)
@@ -212,10 +234,15 @@ function ME_ContainerFrameItemButton_OnClick(button, ignoreModifiers)
         end
 end
 
+function ME_MacroFrame_SaveMacro( ... )
+        oldMacroFrame_SaveMacro()
+        ME_MacroFrame_Saved = true
+end
+
 --TODO
 --Implement clicking on a item while TradeSkill frame is open, allow searching skills with materials linked
-
 function MacroHook( ... )
+        LoadAddOn("Blizzard_MacroUI")
         local temp = ContainerFrameItemButton_OnClick
         if ( ME_HookFunction("ContainerFrameItemButton_OnClick" , "ME_ContainerFrameItemButton_OnClick") ) then
                 oldContainerFrameItemButton_OnClick = temp
@@ -224,5 +251,10 @@ function MacroHook( ... )
         temp = PaperDollItemSlotButton_OnClick
         if ( ME_HookFunction("PaperDollItemSlotButton_OnClick" , "ME_PaperDollItemSlotButton_OnClick") ) then
                 oldPaperDollItemSlotButton_OnClick = temp
+        end
+        
+        temp = MacroFrame_SaveMacro
+        if ( ME_HookFunction("MacroFrame_SaveMacro" , "ME_MacroFrame_SaveMacro") ) then
+                oldMacroFrame_SaveMacro = temp
         end
 end

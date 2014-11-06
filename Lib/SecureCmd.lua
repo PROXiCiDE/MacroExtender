@@ -21,6 +21,30 @@ local SecureCmdRelationalOperatorsHandlers = {
         ['=='] = function (w, n) return w == n end,
 }
 
+local function SecureCmdOptionOperandEval( desired, funcRaw, funcPercent, ... )
+        if desired then
+                local found,_,operand,num,pct = string.find(desired, "%s*([<>=]+)%s*(%d+)([%%])")
+                if not found then
+                        found,_,operand,num = string.find(desired, "%s*([<>=]+)%s*(%d+)")
+                end
+                
+                if found then
+                        local op_f = SecureCmdRelationalOperatorsHandlers[operand]
+                        if op_f then
+                                num = tonumber(num)
+                                
+                                if pct and funcPercent then
+                                        return op_f(funcPercent(unpack(arg)),num)
+                                else
+                                        return op_f(funcRaw(unpack(arg)),num)
+                                end
+                        end
+                end
+        end
+        
+        return nil
+end
+
 local SecureCmdOptionHandlers = {  
         --  
         -- WOW Conditions 
@@ -80,7 +104,7 @@ local SecureCmdOptionHandlers = {
                 local n = table.getn(arg)
                 if ( n > 0 ) then
                         for i=1, n do
-                                local desired = string.lower(arg[i])
+                                local desired = ME_StringLower(arg[i])
                                 if ( desired == "party" ) then
                                         if ( GetNumPartyMembers() > 0 ) then
                                                 return true
@@ -96,7 +120,7 @@ local SecureCmdOptionHandlers = {
                 end
         end,
         
-        stance = function(target, ...)
+        stance = function(target, ...)        
                 local stance = GetShapeshiftForm(true)
                 local n = table.getn(arg)
                 if ( n > 0 ) then
@@ -119,9 +143,9 @@ local SecureCmdOptionHandlers = {
                 if ( n > 0 ) then
                         local name = UnitName("pet")
                         local family = UnitCreatureFamily("pet") or ""
-                        name, family = string.lower(name), string.lower(family)
+                        name, family = ME_StringLower(name), ME_StringLower(family)
                         for i=1, n do
-                                local desired = string.lower(arg[i])
+                                local desired = ME_StringLower(arg[i])
                                 if ( desired == name or desired == family ) then
                                         return true
                                 end
@@ -135,7 +159,7 @@ local SecureCmdOptionHandlers = {
                 local n = table.getn(arg)
                 if ( n > 0 ) then
                         for i=1, n do
-                                local type = string.lower(arg[i])
+                                local type = ME_StringLower(arg[i])
                                 if type then
                                         if ME_IsEquippedItemType(type) then
                                                 return true
@@ -150,7 +174,7 @@ local SecureCmdOptionHandlers = {
                 local n = table.getn(arg)
                 if ( n > 0 ) then
                         for i=1, n do
-                                local key = string.lower(arg[i])
+                                local key = ME_StringLower(arg[i])
                                 if ( (key == "shift" and IsShiftKeyDown()) or
                                         (key == "ctrl" and IsControlKeyDown()) or
                                         (key == "alt" and IsAltKeyDown()) ) then
@@ -168,12 +192,12 @@ local SecureCmdOptionHandlers = {
                         return false 
                 end
                 
-                local spell = string.lower(spell or "")
+                local spell = ME_StringLower(spell or "")
                 local n = table.getn(arg)
                 if ( n > 0 ) then
                         if ME_EventLog.Channeling then
                                 for i=1, n do
-                                        local desired = string.lower(arg[i] or "")
+                                        local desired = ME_StringLower(arg[i])
                                         if desired == spell then
                                                 return true
                                         end
@@ -187,66 +211,33 @@ local SecureCmdOptionHandlers = {
         --
         --Non WOW Conditions
         --
+        
         mana = function(target,desired)
                 if not UnitExists(target) then
                         return false
                 end
-                if desired then
-                        local found,_,operand,num = string.find(desired, "%s*([<>=]+)%s*(%d+)")
-                        if found then
-                                local op_f = SecureCmdRelationalOperatorsHandlers[operand]
-                                if op_f then
-                                        num = tonumber(num)
-                                        return op_f(UnitManaPct(target),num)
-                                end
-                        end
-                end
-                return false
+                return SecureCmdOptionOperandEval(desired, UnitMana,UnitManaPct, target)
         end,
         
         health = function(target,desired)
                 if not UnitExists(target) then
                         return false
                 end
-                if desired then
-                        local found,_,operand,num = string.find(desired, "%s*([<>=]+)%s*(%d+)")
-                        if found then
-                                local op_f = SecureCmdRelationalOperatorsHandlers[operand]
-                                if op_f then
-                                        num = tonumber(num)
-                                        return op_f(UnitHealthPct(target),num)
-                                end
-                        end
-                end
-                return false
+                return SecureCmdOptionOperandEval(desired, UnitHealth,UnitHealthPct, target)
         end,
         
         pmana = function(target,desired)
-                if desired then
-                        local found,_,operand,num = string.find(desired, "%s*([<>=]+)%s*(%d+)")
-                        if found then
-                                local op_f = SecureCmdRelationalOperatorsHandlers[operand]
-                                if op_f then
-                                        num = tonumber(num)
-                                        return op_f(UnitManaPct("player"),num)
-                                end
-                        end
+                if not UnitExists(target) then
+                        return false
                 end
-                return false
+                return SecureCmdOptionOperandEval(desired, UnitMana,UnitManaPct, "player")
         end,
         
         phealth = function(target,desired)
-                if desired then
-                        local found,_,operand,num = string.find(desired, "%s*([<>=]+)%s*(%d+)")
-                        if found then
-                                local op_f = SecureCmdRelationalOperatorsHandlers[operand]
-                                if op_f then
-                                        num = tonumber(num)
-                                        return op_f(UnitHealthPct("player"),num)
-                                end
-                        end
+                if not UnitExists(target) then
+                        return false
                 end
-                return false
+                return SecureCmdOptionOperandEval(desired, UnitHealth,UnitHealthPct, "player")
         end,
         
         pethappy = function (target,...) 
@@ -343,6 +334,25 @@ local SecureCmdOptionHandlers = {
         
 }
 
+-- Class restriction is useful for tooltips
+local function SecureCmdClassRestrictions( options )
+        local SCO_Restrictions = {
+                stance = {"DRUID","WARRIOR"},
+                form = {"DRUID","WARRIOR"},
+                pethappy = {"HUNTER"},
+                petloyalty = {"HUNTER"},
+                shadowform = {"PRIEST"},
+                stealth = {"ROGUE"},
+        }
+        
+        local o = SCO_Restrictions[options] 
+        if o then
+                if not ME_CheckResultsFromTable(UnitClass("player"),o) then
+                        return nil
+                end
+        end
+        return true
+end
 local function SecureCmdOptionsShortcut( options )
         local SCO_Shortcuts = {
                 chan = "channeling",
@@ -370,42 +380,47 @@ local function SecureCmdOptionCheckOptions(o, ...)
                         local invert = false
                         local args
                         option, args = strsplit(':', option)
-                        option = string.lower(option)
+                        option = ME_StringLower(option)
                         if ( string.find(option, "^no") ) then
                                 invert = true
                                 option = string.sub(option, 3)
                         end
+                        
                         local handler = SecureCmdOptionHandlers[SecureCmdOptionsShortcut(option)]
                         if ( handler ) then
-                                if ( args ) then
-                                        if ( string.find(args, '/', 1, true) ) then
-                                                if ( invert ) then
-                                                        table.insert(o, function(target)
-                                                                        return not handler(target, strsplit('/', args))
-                                                        end)
-                                                else
-                                                        table.insert(o, function(target)
-                                                                        return handler(target, strsplit('/', args))
-                                                        end)
-                                                end
-                                        else
-                                                if ( invert ) then
-                                                        table.insert(o, function(target)
-                                                                        return not handler(target, args)
-                                                        end)
-                                                else
-                                                        table.insert(o, function(target)
-                                                                        return handler(target, args)
-                                                        end)
-                                                end
-                                        end
+                                if o.config and o.config.restrict and (not SecureCmdClassRestrictions(option)) then
+                                        table.insert(o, function() return false end)
                                 else
-                                        if ( invert ) then
-                                                table.insert(o, function(target)
-                                                                return not handler(target)
-                                                end)
+                                        if ( args ) then
+                                                if ( string.find(args, '/', 1, true) ) then
+                                                        if ( invert ) then
+                                                                table.insert(o, function(target)
+                                                                                return not handler(target, strsplit('/', args))
+                                                                end)
+                                                        else
+                                                                table.insert(o, function(target)
+                                                                                return handler(target, strsplit('/', args))
+                                                                end)
+                                                        end
+                                                else
+                                                        if ( invert ) then
+                                                                table.insert(o, function(target)
+                                                                                return not handler(target, args)
+                                                                end)
+                                                        else
+                                                                table.insert(o, function(target)
+                                                                                return handler(target, args)
+                                                                end)
+                                                        end
+                                                end
                                         else
-                                                table.insert(o, handler)
+                                                if ( invert ) then
+                                                        table.insert(o, function(target)
+                                                                        return not handler(target)
+                                                        end)
+                                                else
+                                                        table.insert(o, handler)
+                                                end
                                         end
                                 end
                         else
@@ -439,8 +454,14 @@ local function SecureCmdOptionBuildTable(tbl, optionSet)
         for options in string.gfind(optionSet, "(%b[])") do
                 local o = {}
                 local target
+                
+                if tbl.config then
+                        o.config = ME_ShallowCopy(tbl.config)
+                end
+                
                 options, target, smartcast = SecureCmdOptionCheckTarget(options)
                 SecureCmdOptionCheckOptions(o, strsplit(',', options))
+                
                 o.target = target
                 o.smartcast = smartcast
                 table.insert(t, o)
@@ -450,11 +471,14 @@ local function SecureCmdOptionBuildTable(tbl, optionSet)
 end
 
 local OptionSetCache = setmetatable({}, {
-                __index = SecureCmdOptionBuildTable
+                __index = SecureCmdOptionBuildTable,             
 })
 
+-- OptionSetCache.Restrict = function(self,enable)
+--         self.restrict = enable
+-- end
 
-function SecureCmdOptionParseArgs(...)
+function SecureCmdOptionParseArgs(config, ...)
         for i=1, table.getn(arg) do
                 local cmd = arg[i]
                 local _, start, options = string.find(cmd, "(%[.*%])");
@@ -463,6 +487,10 @@ function SecureCmdOptionParseArgs(...)
                 local target;
                 local smartcast = false
                 if ( options ) then
+                        if type(config) == "table" then
+                                OptionSetCache.config = ME_ShallowCopy(config)
+                        end
+                        
                         local set = OptionSetCache[options];
                         local i = 1;
                         valid = false;
@@ -520,9 +548,9 @@ function SecureCmdItemParse(item)
                 return nil, nil, nil
         end
         
-        local found,_,bag, slot = string.find(item, "^(%d+)%s+(%d+)$")
-        if not found then
-                found,_, slot = string.find(item, "^(%d+)$")
+        local _,_,bag,slot = string.find(item, "^(%d+)%s+(%d+)$")
+        if not bag then
+                _,_,slot = string.find(item, "^(%d+)$")
         end
         
         if bag then
@@ -548,8 +576,19 @@ function SecureCmdOptionParseConditions(args)
         return SecureCmdOptionParseConditionsOnlyArgs(strsplit(';', args));
 end
 
+function SecureCmdOptionParseRestrict(args)
+        return SecureCmdOptionParseArgs({restrict = true},strsplit(';', args))
+end
+
+function SecureCmdOptionParseEx(config,args)
+        if type(config) ~= "table" then
+                config = nil
+        end
+        return SecureCmdOptionParseArgs(config,strsplit(';', args))
+end
+
 function SecureCmdOptionParse(args)
-        return SecureCmdOptionParseArgs(strsplit(';', args))
+        return SecureCmdOptionParseArgs(nil,strsplit(';', args))
 end
 
 
@@ -670,7 +709,7 @@ function ExecuteCastSequence( sequence, target, smartcast )
                 end
                 entry = {}
                 CreateCastSquenceActions(smartcast,entry,strsplit(",",spells))
-                entry.reset = string.lower(reset or "")
+                entry.reset = ME_StringLower(reset)
                 ME_CastSequenceList[sequence] = entry
                 entry.index = 1
         end

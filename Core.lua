@@ -3,6 +3,8 @@ local L = ME_GetLocale()
 MacroExtender_Options = nil
 MacroExtender_OptionsDefaults = {
         MacroUI = true,
+        ActionBars = true,
+        Inventory = true
 }
 
 local ME_OptionOps = {
@@ -135,12 +137,12 @@ local function ProxMacro_Handler(msg,editbox)
                         table.insert(args, word);
                 end
                 
-                local cmd = string.lower(args[1] or "")
+                local cmd = ME_StringLower(args[1])
                 
                 if cmd == "macroui" then
                         local option = ME_Usage(args, "MacroUI "..L["interface improvement"], "on/off","on/off", MacroExtender_Options.MacroUI)
                         if option then
-                                local option = string.lower(option)
+                                local option = ME_StringLower(option)
                                 
                                 local show = true
                                 if option == "on" then
@@ -150,6 +152,34 @@ local function ProxMacro_Handler(msg,editbox)
                                 end
                         else
                                 ME_Print("MacroUI "..L["is currently"].." %s",IsOptionEnabled(MacroExtender_Options.MacroUI))
+                        end
+                elseif cmd == "actionbars" then
+                        local option = ME_Usage(args, "ActionBars "..L["interface improvement"], "on/off","on/off", MacroExtender_Options.ActionBars)
+                        if option then
+                                local option = ME_StringLower(option)
+                                
+                                local show = true
+                                if option == "on" then
+                                        MacroExtender_Options.ActionBars = true
+                                elseif option == "off" then
+                                        MacroExtender_Options.ActionBars = nil
+                                end
+                        else
+                                ME_Print("ActionBars "..L["is currently"].." %s",IsOptionEnabled(MacroExtender_Options.ActionBars))
+                        end
+                elseif cmd == "inventory" then
+                        local option = ME_Usage(args, "InventorySlots "..L["interface improvement"], "on/off","on/off", MacroExtender_Options.Inventory)
+                        if option then
+                                local option = ME_StringLower(option)
+                                
+                                local show = true
+                                if option == "on" then
+                                        MacroExtender_Options.Inventory = true
+                                elseif option == "off" then
+                                        MacroExtender_Options.Inventory = nil
+                                end
+                        else
+                                ME_Print("InventorySlots "..L["is currently"].." %s",IsOptionEnabled(MacroExtender_Options.Inventory))
                         end
                 end
         end
@@ -325,4 +355,10 @@ SlashCmdList["PXMOUNT"] = function (msg,editbox)
                                 ME_CallMount(action)
                 end)
         end
+end
+
+SLASH_PXSTOPMACRO1 = "/stopmacro"
+SlashCmdList["PXSTOPMACRO"] = function (msg,editbox)
+       -- This is a dummy macro all work is done via Chat Hook
+       -- Not implemented yet
 end

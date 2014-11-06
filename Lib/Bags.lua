@@ -225,34 +225,49 @@ function ME_HasItem( name )
         if name then
                 if string.find(name,"item:(%d+)") then
                         _, name = ME_GetLinkInfo(name)
+                else
+                        local item,bag,slot = SecureCmdItemParse(name)
+                        if item and bag and slot then
+                                _, name = ME_GetLinkInfo(item)
+                        end
                 end
-                name = string.lower(name)
-                if ME_Bags[name] then
-                        return true, ME_Bags[name]
+                
+                if name then
+                        name = ME_StringLower(name)
+                        if ME_Bags[name] then
+                                return true, ME_Bags[name]
+                        end
                 end
         end
         return nil
 end
 
+local iii = 0
 function ME_GetItemCount( itemName )
         if not itemName then return nil end
-        
-        itemCount = nil
+        local stackCount, itemCount
         local found, item = ME_HasItem(itemName)
         if found and item then
                 itemCount = item.count
+                stackCount = Select(7, GetItemInfo(item.id))
         else 
-                itemName = string.lower(itemName)
+                itemName = ME_StringLower(itemName)
                 for container = 0, 4 do
                         for slot = 1, GetContainerNumSlots(container) do
                                 itemLink = GetContainerItemLink(container, slot)
                                 if itemLink then
-                                        if string.lower(Select(2,ME_GetLinkInfo(itemLink))) == itemName then
-                                                thisCount = Select(2,GetContainerItemInfo(container, slot))
-                                                if ( not itemCount ) then
-                                                        itemCount = 0
+                                        local id, name = ME_GetLinkInfo(itemLink)
+                                        if id and name then
+                                                if ME_StringLower(name) == itemName then
+                                                        local thisCount = Select(2,GetContainerItemInfo(container, slot))
+                                                        if not stackCount then
+                                                                stackCount = Select(7, GetItemInfo(id))
+                                                        end
+                                                        if not itemCount then
+                                                                itemCount = 0
+                                                        end
+                                                        itemCount = itemCount + thisCount
                                                 end
-                                                itemCount = itemCount + thisCount
                                         end
                                 end
                         end
@@ -260,17 +275,23 @@ function ME_GetItemCount( itemName )
                 for slot = 0, 19 do
                         itemLink = GetInventoryItemLink("player", slot)
                         if itemLink then
-                                if string.lower(Select(2,ME_GetLinkInfo(itemLink))) == itemName then
-                                        if not itemCount then
-                                                itemCount = 0
+                                local id, name = ME_GetLinkInfo(itemLink)
+                                if id and name then
+                                        if ME_StringLower(name) == itemName then
+                                                if not stackCount then
+                                                        stackCount = Select(7, GetItemInfo(id))
+                                                end
+                                                if not itemCount then
+                                                        itemCount = 0
+                                                end
+                                                itemCount = itemCount + GetInventoryItemCount("player", slot)
                                         end
-                                        itemCount = itemCount + GetInventoryItemCount("player", slot)
                                 end
                         end
                 end
         end
         
-        return itemCount
+        return itemCount, stackCount
 end
 
 function ME_GetItemInfo( name, smartcast )
@@ -330,7 +351,7 @@ function ME_FindItemByID( id )
 end
 
 function ME_IsItemOfType( id, itemType )
-        if id>0 then
+        if id and id>0 then
                 local t_list = ME_FindBestOf_Table[itemType]
                 if t_list then
                         for k,v in pairs(t_list) do
@@ -340,13 +361,13 @@ function ME_IsItemOfType( id, itemType )
                         end
                 end
         end
-
+        
         return
 end
 
 --Return name,id,link
 function ME_FindBestItemOf( name )
-        name = string.lower(name or "")
+        name = ME_StringLower(name)
         local t_list = ME_FindBestOf_Table[name]
         if t_list then
                 for k,v in pairs(t_list) do
@@ -428,15 +449,21 @@ end
 function ME_UpdateBags( ... )
         ME_Bags = WipeTable(ME_Bags)
         
-        local function filterFN(itemLink,id,name,bag,slot)
-                local l_name = string.lower(name)
+        local function item_filterFN(itemName, id, bag, slot, itemLink, itemQuality,itemLevel,itemMinLevel,itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice)
+                local l_name = ME_StringLower(itemName)
                 if not ME_Bags[l_name] then
-                        ME_Bags[l_name] = { link = itemLink, id = id, name = name, count = 1 }
+                        ME_Bags[l_name] = { 
+                                link = itemLink, 
+                                id = id, 
+                                name = itemName,
+                                count = 1,
+                                itemTexture = itemTexture 
+                        }
                 else
                         ME_Bags[l_name].count = ME_Bags[l_name].count + 1
                 end
                 table.insert(ME_Bags[l_name],{ bag=bag, slot=slot })
         end
         
-        ME_ApplyBagFilter(filterFN)
+        ME_ApplyBagFilter(item_filterFN)
 end

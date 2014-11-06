@@ -53,10 +53,10 @@ end
 
 function ME_GetSpellTable(spell, rankOnly)
         rankOnly = rankOnly or false
-        local f_spell,f_rank = ME_SpellSplitRank(string.lower(spell))
+        local f_spell,f_rank = ME_SpellSplitRank(ME_StringLower(spell))
         
         if ME_SpellHasAkwardRank(spell) then
-                f_spell = f_spell..' '..'('..string.lower(f_rank)..')'
+                f_spell = f_spell..' '..'('..ME_StringLower(f_rank)..')'
         end
         
         if ME_Spells[f_spell] then
@@ -72,7 +72,7 @@ function ME_GetSpellTable(spell, rankOnly)
 end
 
 function ME_GetSpellID(spell, rank)
-        spell = string.lower(spell)
+        spell = ME_StringLower(spell)
         if not ME_Spells[spell] then
                 return nil
         end
@@ -99,7 +99,7 @@ function ME_GetSpellEfficencay( spell )
         local found = false
         
         if spellTable then
-                local l_spell = string.lower(spell)
+                local l_spell = ME_StringLower(spell)
                 if string.find(l_spell,"life tap")  then
                         if Select(2,UnitClass("player")) == "WARLOCK" and UnitManaPct("player") < 100 then
                                 local scale = 563
@@ -210,11 +210,11 @@ function ME_UpdateSpellBook( ... )
         
         local manaTable = {}        
         
-        local function filterFN(spellTabName,spellIndex,spellName,rankName,spellCost,spellTexture,spellType,isChanneled)
+        local function filterFN(bookType,spellTabName,spellIndex,spellName,rankName,spellCost,spellTexture,spellType,isChanneled)
                 spellTexture = Select(3,string.find(spellTexture,"([%w%_]+)$"))
                 
                 rank = tonumber(Select(3,string.find(rankName, "(%d+)$")))                 
-                local l_spell = string.lower(spellName)
+                local l_spell = ME_StringLower(spellName)
                 
                 if not rank then
                         rank = 1
@@ -257,6 +257,7 @@ function ME_UpdateSpellBook( ... )
                         
                         if not manaTable[l_spell] then
                                 manaTable[l_spell] = {  
+                                        bookType = bookType,
                                         akwardSpell = ak_found,
                                         powerType = powerType, 
                                         maxRanks = 1, 
@@ -269,7 +270,7 @@ function ME_UpdateSpellBook( ... )
                         
                         if not manaTable[l_spell]["powerCost"][spellManaIndex] then
                                 manaTable[l_spell]["powerCost"][spellManaIndex] = {
-                                        id = tonumber(s),
+                                        id = tonumber(spellIndex),
                                         spellName = spellName,
                                         spellCost = spellCost,
                                         rankName = rankName,
@@ -285,6 +286,7 @@ function ME_UpdateSpellBook( ... )
                         
                         if not ME_Spells[l_spell] then
                                 ME_Spells[l_spell] = {  
+                                        bookType = bookType,
                                         akwardSpell = ak_found,
                                         powerType = powerType, 
                                         maxRanks = rank, 
@@ -299,7 +301,7 @@ function ME_UpdateSpellBook( ... )
                         
                         if not ME_Spells[l_spell][rankName] then
                                 ME_Spells[l_spell][rankName] = {
-                                        id = tonumber(s),
+                                        id = tonumber(spellIndex),
                                         spellName = spellName,
                                         spellCost = spellCost, 
                                         rank = rank, 
@@ -341,4 +343,6 @@ function ME_UpdateSpellBook( ... )
                         end
                 end
         end
+
+        -- ME_ApplySpellFilter(filterFN,BOOKTYPE_PET)
 end

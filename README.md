@@ -1,7 +1,7 @@
 MacroExtender
 =============
 
-MacroExtender addon for 1.12.1 World of Warcraft
+MacroExtender AddOn for 1.12.1 World of Warcraft
 
   - Conditional behavior for macros
   - more macro commands
@@ -9,11 +9,11 @@ MacroExtender addon for 1.12.1 World of Warcraft
 > MacroExtender allows you to create conditional statement macros that are found in WOW Expansion's TBC+ and more
 
 ##Version
-1.06.8
+1.06.9
 
 Read the **Changelog.txt** for details
 
-#Installination
+#Installation
 > If you are updating **MacroExtender**, please delete all contents of the old directory first to prevent any issues.
 
 * Download **MacroExtender**
@@ -27,6 +27,8 @@ Read the **Changelog.txt** for details
  * SpellStatus-1.0
    * Hooks onto UseContainerItem, missing _onSelf_ argument
 
+***REPORT ALL BUGS*** to https://github.com/PROXiCiDE/MacroExtender/issues
+
 #Configuration
 >All of the config options can be changed with command line
 >More options will be made available in the future development process
@@ -37,6 +39,8 @@ Read the **Changelog.txt** for details
 Option|Paramaters|Description
 :--|:--|:--
 macroui|on/off|Enable or Disable the MacroUI interface enhancements
+actionbars|on/off|Enable or Disable the ActionBar interface enhancements
+inventory|on/off|Enable or Disable the Inventory interface enhancements
 
 #Macro UI
 >You are now able to link items from your bags into the Macro UI. This allows cutting down time from typing a item by name
@@ -59,7 +63,6 @@ Key Combinations|UI Frame|If Empty|Non Empty
 Shift + Left Click|Character Frame|/use SlotID|SlotID
 Shift + Control + Left Click|Character Frame|/equip [condition]ItemName|/equip [condition]ItemName
 Shift + Left Click|Bag Frame|/use ItemName|ItemName
-
 
 #Conditional Statements
 These can also be checked for falseness instead of trueness by prefixing them with **"no"**. For example, **[nocombat]** is a valid conditional and will only perform the actions following it if you are not in combat.
@@ -85,7 +88,7 @@ raid|||Target is in your raid/party
 stance|form|0/1/2/.../n|In a stance
 group||party/raid|Player is in the given type of group (if argument is omitted, defaults to party)
 stealth|||Stealthed (Rogue & Druid only self explanatory
-swimming|swim||Only detects when submerged in water and the Breathing Timer is available, will return false if in Aquatic Form or anytype of water breathing buff
+swimming|swim||Only detects when submerged in water and the Breathing Timer is available, will return false if in Aquatic Form or any type of water breathing buff
 ---
 **Non Retail Conditions**
 
@@ -120,7 +123,7 @@ operator|description
 
 *Buff and Debuff should be used with risk, There is no correct way to determine what buff or debuff belongs to a specific caster*
 
-> Following macros that accept conditional behaivor
+> Following macros that accept conditional behavior
 
 command|alias|description
 :--|:--|:--
@@ -135,6 +138,25 @@ dismount||Dismounts your character
 cancelform||Cancels your current shapeshift/shadow/ghost wolf form
 mount||Mounts your character
 ---
+
+### #show and #showtooltip
+>They do not benefit from conditional behavior
+
+####Syntax
+```
+#showtooltip spellname         <--Shows a spell icon
+#showtooltip itemname          <--Shows an item by name
+#showtooltip BagId slotNum     <--Shows an item by bag slot
+#showtooltip InvSlot           <--Shows an item by inventory slot
+```
+
+####Examples
+>The following macro will allow you to show the shard count and use the spell *Drain Soul* from one entire macro, If no *Soul Shard's* are present then it will show *Drain Soul* icon instead until a *Shoul Shard* is found in the player inventory
+
+```
+#show Soul Shard
+/cast [nochanneling:drain soul]drain soul
+```
 
 ##Inventory Slots
 
@@ -168,8 +190,8 @@ bag1slot|21
 bag2slot|22
 bag3slot|23
 
-##Paramater Usage
-Multiple paramaters can be included by seperating them with a *slash* [**/**] check reference table to see which is supported
+##Parameter Usage
+Multiple parameters can be included by separating them with a *slash* [**/**] check reference table to see which is supported
 
 **condition**:*param1/param2/.../paramN*
 
@@ -220,7 +242,7 @@ soulstone|Warlock|create soulstone|Warlock soulstone
 >Adding a prefix "**@**"  in the front of the *Buff/Debuff* will check the player instead of the target. This allows you too still direct harmful spells at the target
 
 Following example checks for Nightfall Proc on the player if found will cast shadow bolt at target.
-Castsequence will reset every 12 seconds / combat or target changes
+CastSequence will reset every 12 seconds / combat or target changes
 
 ####Correct way
 ```
@@ -235,7 +257,7 @@ This will not succeed as it will target the player to cast **shadow bolt**
 ```
 
 ***PBuff / PDebuff***
->This does not require the prefix "**@**" as this checks the player only.This was implemented so it didnt seem confusing for users
+>This does not require the prefix "**@**" as this checks the player only.This was implemented so it didn't seem confusing for users
 
 Will cast shadow bolt only if the warlock has gained Nightfall proc, otherwise cast immolate
 ```
@@ -301,7 +323,7 @@ reload|Reloads the user interface
 /eq [smartcast]firestone
 ```
 
->To create a warlock healthstone without repeative editing of a macro each spell rank learnt, use the smartcast option. Passing the spell without any rank information such as *minor/lesser/../major* If major is learnt by the player then it will cast *Create Soulstone (Major)()* automatically for the player if the mana requirement is met, if not it will down rank until successful. This works with all ***Create [Spell's]/Conjure [Spell's]***,
+>To create a warlock healthstone without repetitive editing of a macro each spell rank learned, use the smartcast option. Passing the spell without any rank information such as *minor/lesser/../major* If major is learned by the player then it will cast *Create Soulstone (Major)()* automatically for the player if the mana requirement is met, if not it will down rank until successful. This works with all ***Create [Spell's]/Conjure [Spell's]***,
 
 ```
 /cast [smartcast]create healthstone
@@ -326,7 +348,7 @@ reload|Reloads the user interface
 /cast [mod,smartcast]create healthstone;[smartcast]healthstone
 ```
 
->Following macro allows you to create a spellstone if a modifer key is down, if no modifer key is down then equip it if not already equipped then use it
+>Following macro allows you to create a spellstone if a modifier key is down, if no modifier key is down then equip it if not already equipped then use it
 
 ```
 /cast [mod,smartcast]create spellstone;[nomod,smartcast,noequipped:17]spellstone;17
@@ -377,7 +399,7 @@ reload|Reloads the user interface
 ```
 
 ###Randomly
->Will randomy select a mount in the players inventory
+>Will randomly select a mount in the players inventory
 
 ```
 /mount random
@@ -394,13 +416,13 @@ reload|Reloads the user interface
 * Red Skeletal Warhorse
 * Red Skeletal horse
 
-The search will go from *Top* to *Bottom* until the search critera is met. The result would be **Red Skeletal Warhorse** as long the player is not in combat
+The search will go from *Top* to *Bottom* until the search criteria is met. The result would be **Red Skeletal Warhorse** as long the player is not in combat
 ```
 /mount [nocombat]red skele
 ```
 
 #####Wildcard Search
->Wildcard searching for **Red Skeletal Warhorse**. It will search all of the player collected mounts until the first pattern in the search critera found
+>Wildcard searching for **Red Skeletal Warhorse**. It will search all of the player collected mounts until the first pattern in the search criteria found
 
 ```
 /mount [nocombat]red.*war

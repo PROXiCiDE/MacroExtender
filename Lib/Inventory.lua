@@ -36,6 +36,20 @@ local ME_InventoryEquippable = {
         weapon=true,
 }
 
+function ME_GetItemQualityColor(itemQuality)
+        local color_t = {
+                [0] = "ff9d9d9d",
+                [1] = "ffffffff",
+                [2] = "ff1eff00",
+                [3] = "ff0070dd",
+                [4] = "ffa335ee",
+                [5] = "ffff8000",
+                [6] = "ffffcc9d",
+        }
+        
+        return color_t[itemQuality]
+end
+
 function ME_IsRedText(text)
         if text and text:GetText() then
                 local r,g,b = text:GetTextColor()
@@ -44,7 +58,7 @@ function ME_IsRedText(text)
 end
 
 function ME_IsEquippedItemType( itemType )
-        itemType = string.lower(itemType)
+        itemType = ME_StringLower(itemType)
         if ME_Inventory[itemType] then
                 return true
         else
@@ -72,7 +86,7 @@ function ME_IsEquippableByClass( name )
         if found and item then
                 if item.link then
                         ME_InvTooltip:SetOwner(UIParent,"ANCHOR_NONE")
-
+                        
                         ME_InvTooltip:ClearLines()
                         ME_InvTooltip:SetHyperlink('item:'..item.id)
                         
@@ -97,7 +111,7 @@ function ME_IsEquippableItem( name )
                 end
                 
                 local itemType,itemSubType = GetItemInfoType(item.id)
-                itemType = string.lower(itemType or "")
+                itemType = ME_StringLower(itemType)
                 if not ME_InventoryEquippable[itemType] then
                         return false
                 end
@@ -116,14 +130,18 @@ function ME_GetInventoryItemInfo( slot )
         return nil
 end
 
+-- function ME_GetItemQuality( link )
+--         local id = ME_GetInventoryItemInfo() 
+-- end
+
 --Returns SlotID,ItemID,ItemName or nil not found
 function ME_HasInventory( name )
-        name = string.lower(name or "")
         if name then
+                name = ME_StringLower(name)
                 for i=0,19 do
                         local i_id,i_name = ME_GetInventoryItemInfo(i)
-                        if i_id then
-                                i_name = string.lower(i_name)
+                        if i_id and i_id > 0 then
+                                i_name = ME_StringLower(i_name)
                                 if string.find(i_name,name) then
                                         return i
                                 end
@@ -144,7 +162,7 @@ function ME_EquipSaveMacro( name, deleteDup )
                 if itemLink then
                         local id,name = ME_GetLinkInfo(itemLink)
                         texture = Select(10,GetItemInfo(id))
-                        if id>0 and name then
+                        if id and id>0 and name then
                                 table.insert(equipList,name)
                         end
                 end
@@ -166,10 +184,10 @@ function ME_InventoryUpdate( ... )
                 local itemLink = GetInventoryItemLink("player", i)
                 if itemLink then
                         local id,name = ME_GetLinkInfo(itemLink)
-                        if id>0 and name then
+                        if id and id>0 and name then
                                 local itemType,itemSubType = GetItemInfoType(id)
-                                itemType = string.lower(itemType or "")
-                                itemSubType = string.lower(itemSubType or "")
+                                itemType = ME_StringLower(itemType)
+                                itemSubType = ME_StringLower(itemSubType)
                                 
                                 if itemType then
                                         if not ME_Inventory[itemType] then
@@ -190,3 +208,115 @@ function ME_InventoryUpdate( ... )
                 end
         end
 end
+
+local ME_BorderFrames = {}
+function CreateBorder( frame, point )
+        local bc
+        
+        if not frame:IsObjectType("Frame") then
+                bc = this:GetParent():CreateTexture(nil,"OVERLAY")
+        else
+                bc = this:CreateTexture(nil,"OVERLAY")
+        end
+        
+        if bc then
+                bc:SetTexture("Interface\\Buttons\\UI-ActionButton-Border")
+                bc:SetBlendMode("ADD")
+                bc:SetWidth(70)
+                bc:SetHeight(70)
+                bc:SetAlpha(0.8)
+                bc:SetPoint("CENTER", point or frame)
+                bc:Hide()
+        end
+        
+        return bc
+end
+
+local ME_CharacterSlots = {
+        "CharacterHeadSlot",
+        "CharacterNeckSlot",
+        "CharacterShoulderSlot",
+        "CharacterShirtSlot",
+        "CharacterChestSlot",
+        "CharacterWaistSlot",
+        "CharacterLegsSlot",
+        "CharacterFeetSlot",
+        "CharacterWristSlot",
+        "CharacterHandsSlot",
+        "CharacterFinger0Slot",
+        "CharacterFinger1Slot",
+        "CharacterTrinket0Slot",
+        "CharacterTrinket1Slot",
+        "CharacterBackSlot",
+        "CharacterMainHandSlot",
+        "CharacterSecondaryHandSlot",
+        [19] = "CharacterTabardSlot",
+}
+
+function ME_CharacterFrame_OnShow()
+        
+        if not MacroExtender_Options.Inventory then
+                ME_CharacterFrame_OnHide()
+                return
+        end
+        
+        if CharacterFrame:IsShown() then
+                for key, slot in pairs(ME_CharacterSlots) do
+                        local slotFrame = getglobal(slot)
+                        local itemLink = GetInventoryItemLink("player", key)
+                        if slotFrame then
+                                local bc = ME_BorderFrames[key]
+                                if bc then
+                                        if itemLink then
+                                                local id = ME_GetInventoryItemInfo(key)
+                                                _,_,itemQuality = GetItemInfo(id)
+                                                
+                                                if itemQuality > 1 then
+                                                        local r,g,b = GetItemQualityColor(itemQuality)
+                                                        bc:SetVertexColor(r,g,b)
+                                                        bc:Show()
+                                                else
+                                                        bc:Hide()
+                                                end
+                                        else
+                                                bc:Hide()
+                                        end
+                                end
+                        end
+                end
+        end
+end
+
+function ME_CharacterFrame_OnHide()
+        for key, slot in pairs(ME_CharacterSlots) do
+                local bc = ME_BorderFrames[key]
+                if bc then
+                        bc:Hide()
+                end
+        end 
+end
+
+function PaperDollHook( ... )
+        PaperDollFrame:SetFrameStrata("LOW")
+        
+        for key, slot in pairs(ME_CharacterSlots) do
+                local slotFrame = getglobal(slot)
+                local bc = CreateBorder(slotFrame)
+                if bc then
+                        if not ME_BorderFrames[key] then
+                                ME_BorderFrames[key] = bc
+                        end
+                end
+        end
+end
+
+local hook = CreateFrame("Frame")
+hook:SetParent("CharacterFrame")
+hook:SetScript("OnShow", ME_CharacterFrame_OnShow)
+hook:SetScript("OnHide", ME_CharacterFrame_OnHide)
+hook:RegisterEvent("UNIT_INVENTORY_CHANGED")
+hook:SetScript("OnEvent", function()
+                if arg1 == "player" then
+                        ME_CharacterFrame_OnShow()
+                end
+end)

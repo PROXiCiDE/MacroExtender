@@ -30,6 +30,8 @@ ME_Frame:RegisterEvent("BAG_UPDATE")
 ME_Frame:RegisterEvent("UPDATE_INVENTORY_ALERTS")
 ME_Frame:RegisterEvent("UNIT_INVENTORY_CHANGED")
 
+ME_CancelingMacro = nil
+
 local function ME_FrameOnEvent( ... )
         -- body
         
@@ -39,6 +41,8 @@ local function ME_FrameOnEvent( ... )
         
         if event == "ADDON_LOADED" then
                 MacroHook()
+                ActionBarHook()
+                PaperDollHook()
         end
         
         if event == "PLAYER_LOGIN" or event == "PLAYER_ENTERING_WORLD" then

@@ -2,6 +2,22 @@
 -- VERSION HISTORY
 ----------------------------------------------------------------------------------
 
+REPORT ALL BUGS TO: https://github.com/PROXiCiDE/MacroExtender/issues
+
+1.06.9 -
+		Macro condition changes
+		mana,pmana,health,phealth now support Raw and Percentage numbers
+
+		#showtooltip, #show implemented
+		ActionBars / Player Inventory frame now functions similar to TBC+
+		ActionBars will highlight items that are in your bag corresponding towards item quality
+
+		Misc bugs in fixes
+
+		ReadMe
+		Spell checking fixes
+
+
 1.06.8 -
 		Mounts
 		Support for Qiraji
