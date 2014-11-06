@@ -1,7 +1,7 @@
 ME_Talents = {}
 
 function ME_GetTalentRankInfo( talent )
-        talent = string.lower(talent)
+        talent = ME_StringLower(talent)
         if ME_Talents[talent] then
                 return ME_Talents[talent].currRank,ME_Talents[talent].maxRank
         end
@@ -17,7 +17,7 @@ function ME_UpdateTalentPoints( ... )
                         local name, icon, tier, column, currRank, maxRank = GetTalentInfo(t, i)
                         local parentTab, parentName = GetTalentTabInfo(t,i)
                         if name then
-                                local name_l = string.lower(name)
+                                local name_l = ME_StringLower(name)
                                 if not ME_Talents[name_l] then
                                         ME_Talents[name_l] = {
                                                 name = name,
