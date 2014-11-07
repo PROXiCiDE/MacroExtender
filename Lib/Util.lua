@@ -1,6 +1,9 @@
 local L = ME_GetLocale()
 _, ME_Title = GetAddOnInfo("MacroExtender")
 
+local _G = getfenv(0)
+local ME_HookSecureTable = { active = {}, guids = {}, handlers = {} }
+
 CreateFrame("GameTooltip","ME_SpellTooltip",UIParent,'GameTooltipTemplate')
 ME_SpellTooltip:Hide()
 
@@ -559,12 +562,58 @@ function ME_ApplySpellFilter( callbackFN, bookType )
 end
 
 function ME_HookFunction(oldFN, newFN)
-        local fn = getglobal(oldFN)
-        if fn ~= getglobal(newFN) then
-                setglobal(oldFN, getglobal(newFN))
+        local fn = _G[oldFN]
+        local nfn = _G[newFN]
+        if fn ~= nfn then
+                _G[oldFN] = nfn
                 return true
         end
         return false
+end
+
+function ME_HookSecureFunction(oldFN, newHandler)
+        local origFN = _G[oldFN]
+        if not origFN or type(origFN) ~= "function" then
+                return
+        end
+        
+        if not newHandler then
+                return
+        end
+        
+        if ME_HookSecureTable.guids[oldFN] then
+                return
+        end
+        
+        local function CreateHookFunction( handler )
+                if type(handler) == "string" then
+                        handler = _G[handler]
+                end
+                
+                local uid
+                uid = function (arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20)
+                        if ME_HookSecureTable.active[uid] then
+                                return handler(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20)
+                        end
+                end
+                return uid
+        end
+        
+        local function CreateSecureHook( oldFN, newFN )
+                local orig = _G[oldFN]
+                _G[oldFN] = function (arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20)
+                        local ret1,ret2,ret3,ret4,ret5,ret6,ret7,ret8,ret9,ret10,ret11,ret12,ret13,ret14,ret15,ret16,ret17,ret18,ret19,ret20 = orig(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20)
+                        newFN(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20)
+                        return ret1,ret2,ret3,ret4,ret5,ret6,ret7,ret8,ret9,ret10,ret11,ret12,ret13,ret14,ret15,ret16,ret17,ret18,ret19,ret20
+                end
+        end
+        
+        local uid = CreateHookFunction(newHandler)
+        ME_HookSecureTable.guids[oldFN] = uid
+        ME_HookSecureTable.active[uid] = true
+        ME_HookSecureTable.handlers[uid] = newHandler
+        
+        CreateSecureHook(oldFN, uid)
 end
 
 function ME_StringHash(text)

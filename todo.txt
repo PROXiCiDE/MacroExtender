@@ -1,0 +1,7 @@
+TODO
+
+Optimizations
+Implement Blizz-like Equipment/Set in the Character Panel
+UI for MacroExtender configuration instead of command line
+Localization and improvements
+/stopmacro

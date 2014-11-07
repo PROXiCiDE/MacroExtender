@@ -1,6 +1,3 @@
-local oldContainerFrameItemButton_OnClick, oldPaperDollItemSlotButton_OnClick
-local oldMacroFrame_SaveMacro
-
 ME_MacroFrame_Saved = nil
 
 function CheckMacroSyntax( macro )
@@ -161,7 +158,6 @@ end
 
 function ME_PaperDollItemSlotButton_OnClick(button, ignoreModifiers)
         if not MacroExtender_Options.MacroUI then
-                oldPaperDollItemSlotButton_OnClick(button,ignoreModifiers)
                 return
         end
         
@@ -199,22 +195,16 @@ function ME_PaperDollItemSlotButton_OnClick(button, ignoreModifiers)
                         end
                 end
         end
-        
-        --prevent character from closing due to dressing room
-        if (not IsShiftKeyDown()) and ((not IsControlKeyDown()) or (not IsAltKeyDown())) then
-                oldPaperDollItemSlotButton_OnClick(button,ignoreModifiers)
-        end
 end
 
 function ME_ContainerFrameItemButton_OnClick(button, ignoreModifiers)
         if not MacroExtender_Options.MacroUI then
-                oldContainerFrameItemButton_OnClick(button,ignoreModifiers)
                 return
         end
         
         local itemCount = nil
         if button == "LeftButton" then
-                if IsShiftKeyDown() and (not ignoreModifiers) then
+                if IsShiftKeyDown() and not ignoreModifiers then
                         if MacroFrame and MacroFrame:IsVisible() then
                                 local bag,slot = this:GetParent():GetID(), this:GetID()
                                 local itemLink = GetContainerItemLink(bag,slot)
@@ -227,15 +217,9 @@ function ME_ContainerFrameItemButton_OnClick(button, ignoreModifiers)
                         end
                 end
         end
-        
-        --prevent item stack split if macro frame is open
-        if (not (MacroFrame and MacroFrame:IsVisible() and IsShiftKeyDown())) then
-                oldContainerFrameItemButton_OnClick(button,ignoreModifiers)
-        end
 end
 
 function ME_MacroFrame_SaveMacro( ... )
-        oldMacroFrame_SaveMacro()
         ME_MacroFrame_Saved = true
 end
 
@@ -243,18 +227,7 @@ end
 --Implement clicking on a item while TradeSkill frame is open, allow searching skills with materials linked
 function MacroHook( ... )
         LoadAddOn("Blizzard_MacroUI")
-        local temp = ContainerFrameItemButton_OnClick
-        if ( ME_HookFunction("ContainerFrameItemButton_OnClick" , "ME_ContainerFrameItemButton_OnClick") ) then
-                oldContainerFrameItemButton_OnClick = temp
-        end
-        
-        temp = PaperDollItemSlotButton_OnClick
-        if ( ME_HookFunction("PaperDollItemSlotButton_OnClick" , "ME_PaperDollItemSlotButton_OnClick") ) then
-                oldPaperDollItemSlotButton_OnClick = temp
-        end
-        
-        temp = MacroFrame_SaveMacro
-        if ( ME_HookFunction("MacroFrame_SaveMacro" , "ME_MacroFrame_SaveMacro") ) then
-                oldMacroFrame_SaveMacro = temp
-        end
+        ME_HookSecureFunction("ContainerFrameItemButton_OnClick" , "ME_ContainerFrameItemButton_OnClick")
+        ME_HookSecureFunction("PaperDollItemSlotButton_OnClick" , "ME_PaperDollItemSlotButton_OnClick")
+        ME_HookSecureFunction("MacroFrame_SaveMacro" , "ME_MacroFrame_SaveMacro")
 end

@@ -4,6 +4,9 @@
 
 REPORT ALL BUGS TO: https://github.com/PROXiCiDE/MacroExtender/issues
 
+1.06.10 -
+		MacroUI / Container Linking is fixed due to secure hooking
+		
 1.06.9 -
 		Macro condition changes
 		mana,pmana,health,phealth now support Raw and Percentage numbers
