@@ -334,22 +334,9 @@ local SecureCmdOptionHandlers = {
 
         cooldown = function(target, ...)
                 local n = table.getn(arg)
-                local found = false
-                local function spell_cooldownFilter(bookType,spellTabName,spellIndex,spellName,rankName,spellCost,spellTexture,spellType,isChanneled)
-                        for i=1, n do
-                                if ME_StringLower(spellName) == ME_StringLower(arg[i]) then
-                                        local start, duration, enable = GetSpellCooldown(spellIndex, bookType)
-                                        if duration > 0 then
-                                                found = true
-                                                break
-                                        end
-                                end
-                        end
+                for i=1, n do
+                        return IsSpellOnCD(arg[i])
                 end
-                if ( n > 0 ) then
-                        ME_ApplySpellFilter(spell_cooldownFilter, BOOKTYPE_SPELL)
-                end
-                return found
         end,
         
 }
