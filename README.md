@@ -108,6 +108,7 @@ buff||texture|Contains buff texture
 debuff||texture|Contains debuff texture
 pbuff||texture|Same as **buff** except it checks the player character only
 pdebuff||texture|Same as **debuff** except it checks the player character only
+cooldown||spell1/spell2/../spellN|Spell is on cooldown
 ---
 
 >Relational operators for mana / health condition for comparison
