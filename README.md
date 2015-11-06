@@ -382,6 +382,16 @@ reload|Reloads the user interface
 /cast [nostance:3]cat form;[stance:3,nostealth]prowl;pounce
 ```
 
+##Shaman
+
+>Only cast Storm Strike with a 2H
+
+```
+/equip [nocooldown:Stormstrike]Bonebiter
+/cast [eq:Bonebiter]Stormstrike
+/cast attack
+```
+
 ##Misc
 ```
 /dismount [combat,mounted]
