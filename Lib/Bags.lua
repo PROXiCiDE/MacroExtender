@@ -446,6 +446,21 @@ function ME_EquipItem( macro )
         end
 end
 
+function ME_TradeItem( macro )
+        local actions,target,smartcast = SecureCmdOptionParse(macro)
+        ME_Print(actions)
+        for b=0,4 do 
+                for s=1,GetContainerNumSlots(b) do
+                        local n=GetContainerItemLink(b,s)
+                        if n and string.find(n,actions) then
+                                PickupContainerItem(b,s)
+                                DropItemOnUnit("target")
+                                break
+                        end
+                end
+        end
+end
+
 function ME_UpdateBags( ... )
         ME_Bags = WipeTable(ME_Bags)
         

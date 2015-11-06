@@ -357,6 +357,13 @@ SlashCmdList["PXMOUNT"] = function (msg,editbox)
         end
 end
 
+SLASH_PXTRADEITEM1 = "/tradeitem"
+SlashCmdList["PXTRADEITEM"] = function (msg,editbox)
+        if  msg or msg ~= "" then
+                ME_TradeItem(msg)
+        end
+end
+
 SLASH_PXSTOPMACRO1 = "/stopmacro"
 SlashCmdList["PXSTOPMACRO"] = function (msg,editbox)
        -- This is a dummy macro all work is done via Chat Hook
