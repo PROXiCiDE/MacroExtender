@@ -424,7 +424,7 @@ function IsStealthed( ... )
 end
 
 function IsSpellOnCD( spell )
-        local spell = ME_StringLower(spell)
+        spell = ME_StringLower(spell)
         for i = 1, GetNumSpellTabs() do
                 local spellTabName, texture, offset, numSpells = GetSpellTabInfo(i)
                 

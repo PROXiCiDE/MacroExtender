@@ -448,14 +448,26 @@ end
 
 function ME_TradeItem( macro )
         local actions,target,smartcast = SecureCmdOptionParse(macro)
-        ME_Print(actions)
+        local item, args = strsplit(',', actions)
         for b=0,4 do 
                 for s=1,GetContainerNumSlots(b) do
                         local n=GetContainerItemLink(b,s)
-                        if n and string.find(n,actions) then
-                                PickupContainerItem(b,s)
-                                DropItemOnUnit("target")
-                                break
+                        local texture, itemCount, locked, quality, readable = GetContainerItemInfo(b, s)
+                        --if we found the item we are trying to trade
+                        if n and not locked and string.find(n,item) then
+                                local found = false
+                                if args then
+                                        if (itemCount .. "") == args then
+                                                found = true
+                                        end
+                                else
+                                        found = true
+                                end
+                                if found then
+                                        PickupContainerItem(b,s)
+                                        DropItemOnUnit("target")
+                                        break
+                                end
                         end
                 end
         end
