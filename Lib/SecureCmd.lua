@@ -331,6 +331,13 @@ local SecureCmdOptionHandlers = {
         ismelee = function(target, desired)
                 return SecureCmdOptionEval((IsUnitCaster(target)==false) or 0, tonumber(desired))
         end,
+
+        cooldown = function(target, ...)
+                local n = table.getn(arg)
+                for i=1, n do
+                        return IsSpellOnCD(arg[i])
+                end
+        end,
         
 }
 

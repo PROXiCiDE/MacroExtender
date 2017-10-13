@@ -108,6 +108,7 @@ buff||texture|Contains buff texture
 debuff||texture|Contains debuff texture
 pbuff||texture|Same as **buff** except it checks the player character only
 pdebuff||texture|Same as **debuff** except it checks the player character only
+cooldown||spell1/spell2/../spellN|Spell is on cooldown
 ---
 
 >Relational operators for mana / health condition for comparison
@@ -379,6 +380,16 @@ reload|Reloads the user interface
 ##Druid
 ```
 /cast [nostance:3]cat form;[stance:3,nostealth]prowl;pounce
+```
+
+##Shaman
+
+>Only cast Storm Strike with a 2H
+
+```
+/equip [nocooldown:Stormstrike]Bonebiter
+/cast [eq:Bonebiter]Stormstrike
+/cast attack
 ```
 
 ##Misc

@@ -423,6 +423,26 @@ function IsStealthed( ... )
         return nil
 end
 
+function IsSpellOnCD( spell )
+        spell = ME_StringLower(spell)
+        for i = 1, GetNumSpellTabs() do
+                local spellTabName, texture, offset, numSpells = GetSpellTabInfo(i)
+                
+                if not spellTabName then  
+                        break
+                end   
+                
+                for spellIndex = offset + 1, offset + numSpells do
+                        local spellName, rankName = GetSpellName(spellIndex, BOOKTYPE_SPELL)
+                        if spell == ME_StringLower(spellName) then
+                                local start, duration, enable = GetSpellCooldown(spellIndex, BOOKTYPE_SPELL)
+                                return duration > 0
+                        end
+                end
+        end
+        return false
+end
+
 function ME_CheckResultsFromTable( res, tbl )
         for _,v in pairs(tbl) do
                 if v == res then
