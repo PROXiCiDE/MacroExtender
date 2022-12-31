@@ -349,12 +349,12 @@ local function SecureCmdClassRestrictions( options )
                 pethappy = {"HUNTER"},
                 petloyalty = {"HUNTER"},
                 shadowform = {"PRIEST"},
-                stealth = {"ROGUE"},
+                stealth = {"DRUID", "ROGUE"},
         }
         
         local o = SCO_Restrictions[options] 
         if o then
-                if not ME_CheckResultsFromTable(UnitClass("player"),o) then
+                if not ME_CheckResultsFromTable(Select(2,UnitClass("player")),o) then
                         return nil
                 end
         end
